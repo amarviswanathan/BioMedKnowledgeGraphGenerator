@@ -2,7 +2,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.stream.Stream;
+
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
 
@@ -30,7 +31,7 @@ public class ReachJson2Xml {
 		.forEach(s -> {
 			try {
 				writeXML(s.toString());
-			} catch (IOException e) {
+			} catch (IOException | JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -40,9 +41,10 @@ public class ReachJson2Xml {
 	/**
 	 * @param jsonFileName "The name of the input json file name. The same name is used for conversion to xml"
 	 * @throws IOException "IOException is thrown because of the file write operation for this function."
+	 * @throws JSONException 
 	 */
 
-	static void writeXML(String jsonFileName) throws IOException {
+	static void writeXML(String jsonFileName) throws IOException, JSONException {
 
 		//TODO should be a better method to do this
 		int lastIndex = jsonFileName.lastIndexOf(".");

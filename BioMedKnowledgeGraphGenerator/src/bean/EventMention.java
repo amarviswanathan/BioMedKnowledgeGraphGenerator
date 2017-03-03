@@ -8,14 +8,14 @@ public class EventMention {
 	FrameType frameType;
 	ObjectType objectType;
 	XRef xref;
-	FrameID frameID;
+	String frameID;
 	String text;
 	String verboseText;
-	Type type;
-	Trigger trigger;
-	Type subType;
+	String type;
+	String trigger;
+	String subType;
 	Context context;
-	Arguments arguments;
+	String arguments;
 	Boolean isDirect;
-	FoundBy foundBy;
+	String foundBy;
 }

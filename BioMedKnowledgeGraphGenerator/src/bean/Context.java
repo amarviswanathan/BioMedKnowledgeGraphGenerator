@@ -4,6 +4,6 @@ public class Context {
 	Sentence scope;
 	FrameType frameType;
 	ObjectType objextType;
-	FrameID frameID;
+	String frameID;
 	Facets facets;
 }

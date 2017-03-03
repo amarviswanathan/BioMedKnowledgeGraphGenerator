@@ -1,7 +1,9 @@
 package bean;
 
 public class Facets {
-	Organism organism;
+	String organism;
 	ObjectType objectType;
-	Location location;
+	String location;
+	String cellLine;
+	String tissueType;
 }

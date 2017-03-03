@@ -6,8 +6,8 @@ public class Passage {
 	Boolean isTitle;
 	FrameType frameType;
 	ObjectType objectType;
-	ObjectMeta objectMeta;
-	FrameID frameID;
+	String objectMeta;
+	String frameID;
 	String text;
 	int index;
 }

@@ -7,7 +7,7 @@ public class EntityMention {
 	Sentence sentence;
 	ObjectType objectType;
 	XRef xref;
-	FrameID frameID;
+	String frameID;
 	String text;
-	Type type;
+	String type;
 }

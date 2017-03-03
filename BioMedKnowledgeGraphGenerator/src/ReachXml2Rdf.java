@@ -23,8 +23,10 @@ import com.sun.xml.internal.ws.util.xml.NodeListIterator;
 public class ReachXml2Rdf {
 	
 	//TODO move these to a property file
-	public static final String READ_LOCATION = "/home/amar/Data/xml/";
-	public static final String WRITE_LOCATION = "/home/amar/Data/rdf/";
+//	public static final String READ_LOCATION = "/home/amar/Data/xml/";
+//	public static final String WRITE_LOCATION = "/home/amar/Data/rdf/";
+	public static final String READ_LOCATION = "/home/sabbir/Programs/xml/";
+	public static final String WRITE_LOCATION = "home/sabbir/Programs/rdf/";
 	static Set<String> types = new HashSet<String>();
 	/**
 	 * @param args
@@ -42,7 +44,6 @@ public class ReachXml2Rdf {
 				e.printStackTrace();
 			}
 		});
-
 		
 		for(String type : types) {
 			System.out.println(type);
@@ -57,8 +58,7 @@ public class ReachXml2Rdf {
 		
 		Document doc = builder.parse(xmlFile);
 		
-		
-		NodeList nodeList = doc.getElementsByTagName("location");
+		NodeList nodeList = doc.getElementsByTagName("xrefs");
 		
 		for(int i = 0; i<nodeList.getLength(); i++) {
 			

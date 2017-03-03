@@ -1,5 +1,9 @@
 package bean;
 
-public class FrameType {
-
+public enum FrameType {
+	ENTITY_MENTION,
+	EVENT_MENTION,
+	CONTEXT,
+	SENTENCE,
+	PASSAGE
 }

@@ -1,5 +1,12 @@
 package bean;
 
-public class ObjectType {
-
+public enum ObjectType {
+	RELATIVE_POS,
+	FRAME_COLLECTION,
+	META_INFO,
+	DB_REFERENCE,
+	FACET_SET,
+	MODIFICATION,
+	FRAME,
+	ARGUMENT
 }
