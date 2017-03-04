@@ -2,19 +2,18 @@ package bean;
 
 public class EventMention {
 	Boolean isHypothesis;
-	String sentenceID;
-	Sentence sentence;
-	Position startPos;
-	Position endPos;
-	FrameType frameType = FrameType.EVENT_MENTION;
-	ObjectType objectType;
-//	XRefs xref;
-	String frameID;
-	String text;
-	String verboseText;
-	String type;
+	String sentenceID;//
+	Sentence sentence;//
+	Position startPos;//
+	Position endPos;//
+	FrameType frameType = FrameType.EVENT_MENTION; //
+	ObjectType objectType; //
+	String frameID; //
+	String text; //
+	String verboseText; //
+	String type;//
 	String trigger;
-	String subType;
+	String subType;//
 	String contextID;
 	Context context;
 	Arguments arguments;

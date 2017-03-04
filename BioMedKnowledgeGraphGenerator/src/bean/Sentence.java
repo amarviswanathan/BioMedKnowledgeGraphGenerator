@@ -3,13 +3,13 @@ package bean;
 public class Sentence {
 	Position startPos;
 	Position endPos;
-	String passageID;
-	Passage passage;
-	FrameType frameType = FrameType.SENTENCE;
-	ObjectType objectType;
-	ObjectMeta objectMeta;
-	String frameID;
-	String text;
+	String passageID;//
+	Passage passage;//
+	FrameType frameType = FrameType.SENTENCE;//
+	ObjectType objectType;//
+	ObjectMeta objectMeta;//
+	String frameID;//
+	String text;//
 	public Position getStartPos() {
 		return startPos;
 	}

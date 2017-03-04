@@ -35,7 +35,7 @@ public class ReachXml2Rdf {
 		// TODO Auto-generated method stub
 		
 		Files.newDirectoryStream(Paths.get(READ_LOCATION),
-				path -> path.toString().contains(".sentences"))
+				path -> path.toString().contains(".entities"))
 		.forEach(s -> {
 			try {
 				readXml(s.toString());
@@ -58,13 +58,15 @@ public class ReachXml2Rdf {
 		
 		Document doc = builder.parse(xmlFile);
 		
-		NodeList nodeList = doc.getElementsByTagName("argument-type");
+		NodeList nodeList = doc.getElementsByTagName("location");
 		
 		for(int i = 0; i<nodeList.getLength(); i++) {
 			
 			Node node = nodeList.item(i);
 //			System.out.println(node.getTextContent());
-			types.add(node.getTextContent());
+			String nodeContent = node.getTextContent();
+			if(!nodeContent.contains("uniprot"))
+				types.add(node.getTextContent());
 			
 		}
 		

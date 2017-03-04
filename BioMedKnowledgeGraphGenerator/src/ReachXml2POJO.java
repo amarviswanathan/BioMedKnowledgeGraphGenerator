@@ -1,13 +1,19 @@
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.HashSet;
 import java.util.Set;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.print.attribute.HashAttributeSet;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.json.XML;
 import org.w3c.dom.*;
 
 import com.sun.xml.internal.ws.util.xml.NodeListIterator;
@@ -40,7 +46,8 @@ public class ReachXml2POJO {
 //	public static final String READ_LOCATION = "/home/amar/Data/xml/";
 //	public static final String WRITE_LOCATION = "/home/amar/Data/rdf/";
 	public static final String READ_LOCATION = "/home/sabbir/Programs/xml/";
-	public static final String WRITE_LOCATION = "home/sabbir/Programs/rdf/";
+	public static final String WRITE_LOCATION = "/home/sabbir/Programs/rdf/";
+	
 	
 	static Set<EntityMention> entity_mentions = new HashSet<EntityMention>();
 	static Set<EventMention> event_mentions = new HashSet<EventMention>();
@@ -62,25 +69,138 @@ public class ReachXml2POJO {
 				e.printStackTrace();
 			}
 		});
-		
-		for(EntityMention entity_mention : entity_mentions) {
-			System.out.println("Entity Mention: " + entity_mention.getFrameID());
+
+		try{
+		    PrintWriter writer = new PrintWriter(WRITE_LOCATION + "entity_mentions.txt", "UTF-8");
+		    for(EntityMention entity_mention : entity_mentions) {
+		    	System.out.println("Entity Mention: " + entity_mention.getFrameID());
+			    writer.println("Frame ID: " + entity_mention.getFrameID());
+			    writer.println("Frame Type: " + entity_mention.getFrameType().toString());
+			    writer.println("Object Type: " + entity_mention.getObjectType().toString());
+			    writer.println("Text: " + entity_mention.getText());
+			    writer.println("Type: " + entity_mention.getType());
+			    writer.println("Start Position: " + entity_mention.getStartPos());
+			    writer.println("\tOffset: " + entity_mention.getStartPos().getOffset());
+			    writer.println("\tReference: " + entity_mention.getStartPos().getReference());
+			    writer.println("\tObject Type: " + entity_mention.getStartPos().getObjectType().toString());
+			    writer.println("End Position: " + entity_mention.getEndPos());
+			    writer.println("\tOffset: " + entity_mention.getEndPos().getOffset());
+			    writer.println("\tReference: " + entity_mention.getEndPos().getReference());
+			    writer.println("\tObject Type: " + entity_mention.getEndPos().getObjectType().toString());
+			    writer.println("Sentence ID: " + entity_mention.getSentenceID());
+			    //writer.println("\tFrame ID: " + entity_mention.getSentence().getFrameID());
+			    //writer.println("\tPassage ID: " + entity_mention.getSentence().getPassageID());
+			    //writer.println("\tText: " + entity_mention.getSentence().getText());
+			    //writer.println("\tFrameType: " + entity_mention.getSentence().getFrameType());
+			    writer.println("Xref: " + entity_mention.getXref());
+			    writer.println("\tID: " + entity_mention.getXref().getID());
+			    writer.println("\tNamespace: " + entity_mention.getXref().getNamespace());
+			    writer.println("\tObject Type: " + entity_mention.getXref().getObjectType().toString());
+			    writer.println("");
+		    }
+		    writer.close();
+		} catch (IOException e) {
+			   // do something
 		}
 		
-		for(EventMention event_mention : event_mentions) {
-			System.out.println("Event Mention: " + event_mention.getFrameID());
+		try{
+		    PrintWriter writer = new PrintWriter(WRITE_LOCATION + "event_mentions.txt", "UTF-8");
+		    for(EventMention event_mention : event_mentions) {
+				System.out.println("Event Mention: " + event_mention.getFrameID());
+			    writer.println("Frame ID: " + event_mention.getFrameID());
+			    writer.println("Frame Type: " + event_mention.getFrameType().toString());
+			    writer.println("Text: " + event_mention.getText());
+			    writer.println("Verbose Text: " + event_mention.getVerboseText());
+			    writer.println("Type: " + event_mention.getType());
+			    writer.println("SubType: " + event_mention.getSubType());
+			    writer.println("Start Position: " + event_mention.getStartPos());
+			    writer.println("\tOffset: " + event_mention.getStartPos().getOffset());
+			    writer.println("\tReference: " + event_mention.getStartPos().getReference());
+			    writer.println("\tObject Type: " + event_mention.getStartPos().getObjectType().toString());
+			    writer.println("End Position: " + event_mention.getEndPos());
+			    writer.println("\tOffset: " + event_mention.getEndPos().getOffset());
+			    writer.println("\tReference: " + event_mention.getEndPos().getReference());
+			    writer.println("\tObject Type: " + event_mention.getEndPos().getObjectType().toString());
+			    writer.println("Object Type: " + event_mention.getObjectType().toString());
+			    writer.println("Sentence ID: " + event_mention.getSentenceID());
+			    //writer.println("\tFrame ID: " + event_mention.getSentence().getFrameID());
+			    //writer.println("\tPassage ID: " + event_mention.getSentence().getPassageID());
+			    //writer.println("\tText: " + event_mention.getSentence().getText());
+			    //writer.println("\tFrameType: " + event_mention.getSentence().getFrameType());
+			    writer.println("Context ID: " + event_mention.getContextID());
+			    writer.println("Context:" + event_mention.getContext());
+			    writer.println("Found By: " + event_mention.getFoundBy());
+			    writer.println("Trigger: " + event_mention.getTrigger());
+			    writer.println("Arguments: " + event_mention.getArguments());
+			    writer.println(event_mention.getArguments().getElements());
+			    writer.println("Is Direct?: " + event_mention.getIsDirect());
+			    writer.println("Is Hypothesis?: " + event_mention.getIsHypothesis());
+			    writer.println("");
+		    }
+		    writer.close();
+		} catch (IOException e) {
+			   // do something
 		}
 		
-		for(Context context : contexts) {
-			System.out.println("Context: " + context.getFrameID());
+		try{
+		    PrintWriter writer = new PrintWriter(WRITE_LOCATION + "contexts.txt", "UTF-8");
+		    for(Context context : contexts) {
+				System.out.println("Context: " + context.getFrameID());
+			    writer.println("Frame ID: " + context.getFrameID());
+			    writer.println("Frame Type: " + context.getFrameType().toString());
+			    writer.println("Scope ID: " + context.getScopeID());
+			    writer.println("Scope: " + context.getScope());
+			    writer.println("Object Type: " + context.getObjectType().toString());
+			    writer.println("Facets: " + context.getFacets());
+			    writer.println(context.getFacets().getElements());
+			    writer.println("");
+		    }
+		    writer.close();
+		} catch (IOException e) {
+			   // do something		
 		}
+		try{
+		    PrintWriter writer = new PrintWriter(WRITE_LOCATION + "sentences.txt", "UTF-8");
+		    for(Sentence sentence : sentences) {
+		    	System.out.println("Sentence: " + sentence.getFrameID());
+		    	writer.println("Frame ID: " + sentence.getFrameID());
+		    	writer.println("Frame Type: " + sentence.getFrameType());
+		    	writer.println("Passage ID: " + sentence.getPassageID());
+		    	writer.println("Passage: " + sentence.getPassage());
+		    	writer.println("Text: " + sentence.getText());
+		    	writer.println("Object Meta: " + sentence.getObjectMeta());
+		    	writer.println("Object Type: " + sentence.getObjectType());
+		    	writer.println("Start Position: " + sentence.getStartPos());
+			    writer.println("\tOffset: " + sentence.getStartPos().getOffset());
+			    writer.println("\tReference: " + sentence.getStartPos().getReference());
+			    writer.println("\tObject Type: " + sentence.getStartPos().getObjectType().toString());
+			    writer.println("End Position: " + sentence.getEndPos());
+			    writer.println("\tOffset: " + sentence.getEndPos().getOffset());
+			    writer.println("\tReference: " + sentence.getEndPos().getReference());
+			    writer.println("\tObject Type: " + sentence.getEndPos().getObjectType().toString());
+		    }
+		    writer.close();
+		} catch (IOException e) {
+		   // do something		
+		}    
 		
-		for(Sentence sentence : sentences) {
-			System.out.println("Sentence: " + sentence.getFrameID());
-		}
-		
-		for(Passage passage : passages) {
-			System.out.println("Passage: " + passage.getFrameID());
+		try{
+		    PrintWriter writer = new PrintWriter(WRITE_LOCATION + "passages.txt", "UTF-8");
+		    for(Passage passage : passages) {
+		    	System.out.println("Passage: " + passage.getFrameID());
+		    	writer.println("Frame ID: " + passage.getFrameID());
+		    	writer.println("Frame Type: " + passage.getFrameType());
+		    	writer.println("Index: " + passage.getIndex());
+		    	writer.println("Section ID: " + passage.getSectionID());
+		    	writer.println("Section Name: " + passage.getSectionName());
+		    	writer.println("Text: " + passage.getText());
+		    	writer.println("Object Type: " + passage.getObjectType());
+		    	writer.println("Object Meta: " + passage.getObjectMeta());
+		    	writer.println("Is Title?: " + passage.getIsTitle());
+		    }
+		    writer.close();
+		} catch (IOException e) {
+		   // do something		
 		}
 		System.out.println("Done");
 	}

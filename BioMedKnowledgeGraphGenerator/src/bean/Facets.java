@@ -6,6 +6,20 @@ public class Facets {
 	String location;
 	String cellLine;
 	String tissueType;
+	
+	public String getElements(){
+		String elements = "\tObject Type: " + objectType.toString();
+		if(location!=null)
+			elements += "\n\tLocation: " + location;
+		if(organism!=null)
+			elements += "\n\tOrganism: " + organism;
+		if(cellLine!=null)
+			elements += "\n\tCell Line: " + cellLine;
+		if(tissueType!=null)
+			elements += "\n\tTissue Type: " + tissueType;
+		return elements;
+	}
+	
 	public String getOrganism() {
 		return organism;
 	}

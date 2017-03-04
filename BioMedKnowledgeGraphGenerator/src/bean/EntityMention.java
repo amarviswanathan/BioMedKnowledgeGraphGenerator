@@ -6,7 +6,7 @@ public class EntityMention {
 	FrameType frameType = FrameType.ENTITY_MENTION;
 	String sentenceID;
 	Sentence sentence;
-	ObjectType objectType = ObjectType.FRAME;
+	ObjectType objectType;
 	XRefs xref;
 	String frameID;
 	String text;

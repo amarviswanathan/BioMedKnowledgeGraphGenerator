@@ -7,12 +7,21 @@ public class Arguments {
 	ArgumentType argumentType;
 	String text;
 	String type;
+	
+	public String getElements(){
+		return "\tObject Type: " + objectType +
+				"\n\tArg: " + arg +
+				"\n\tIndex: " + index + 
+				"\n\tArgument Type: " + argumentType.toString() + 
+				"\n\tType: " + type +
+				"\n\tText: " + text;
+	}
+	
 	public String getArg() {
 		return arg;
 	}
 	public void setArg(String arg) {
-		if(arg!=null)
-			this.arg = arg;
+		this.arg = arg;
 	}
 	public int getIndex() {
 		return index;
