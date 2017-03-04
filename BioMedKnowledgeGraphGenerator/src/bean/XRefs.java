@@ -1,14 +1,11 @@
 package bean;
 
-public class XRef {
-	ObjectType objectType;
+public class XRefs {
+	ObjectType objectType = ObjectType.DB_REFERENCE;
 	String namespace;
 	String ID;
 	public ObjectType getObjectType() {
 		return objectType;
-	}
-	public void setObjectType(ObjectType objectType) {
-		this.objectType = objectType;
 	}
 	public String getNamespace() {
 		return namespace;

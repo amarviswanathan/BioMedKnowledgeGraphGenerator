@@ -6,7 +6,7 @@ public class Passage {
 	Boolean isTitle;
 	FrameType frameType = FrameType.PASSAGE;
 	ObjectType objectType;
-	String objectMeta;
+	ObjectMeta objectMeta;
 	String frameID;
 	String text;
 	int index;
@@ -40,10 +40,10 @@ public class Passage {
 	public void setObjectType(ObjectType objectType) {
 		this.objectType = objectType;
 	}
-	public String getObjectMeta() {
+	public ObjectMeta getObjectMeta() {
 		return objectMeta;
 	}
-	public void setObjectMeta(String objectMeta) {
+	public void setObjectMeta(ObjectMeta objectMeta) {
 		this.objectMeta = objectMeta;
 	}
 	public String getFrameID() {

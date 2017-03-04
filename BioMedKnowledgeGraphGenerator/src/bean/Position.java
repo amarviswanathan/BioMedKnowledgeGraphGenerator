@@ -1,14 +1,14 @@
 package bean;
 
 public class Position {
-	String reference;
+	String referenceID;
 	int offset;
-	ObjectType objectType;
+	ObjectType objectType = ObjectType.RELATIVE_POS;
 	public String getReference() {
-		return reference;
+		return referenceID;
 	}
-	public void setReference(String reference) {
-		this.reference = reference;
+	public void setReference(String referenceID) {
+		this.referenceID = referenceID;
 	}
 	public int getOffset() {
 		return offset;
@@ -18,8 +18,5 @@ public class Position {
 	}
 	public ObjectType getObjectType() {
 		return objectType;
-	}
-	public void setObjectType(ObjectType objectType) {
-		this.objectType = objectType;
 	}
 }

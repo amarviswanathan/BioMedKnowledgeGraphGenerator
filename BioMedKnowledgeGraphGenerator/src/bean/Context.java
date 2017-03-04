@@ -1,9 +1,10 @@
 package bean;
 
 public class Context {
+	String scopeID;
 	Sentence scope;
 	FrameType frameType = FrameType.CONTEXT;
-	ObjectType objectType;
+	ObjectType objectType = ObjectType.FRAME;
 	String frameID;
 	Facets facets;
 	public Sentence getScope() {
@@ -11,6 +12,12 @@ public class Context {
 	}
 	public void setScope(Sentence scope) {
 		this.scope = scope;
+	}
+	public String getScopeID() {
+		return scopeID;
+	}
+	public void setScopeID(String scopeID) {
+		this.scopeID = scopeID;
 	}
 	public FrameType getFrameType() {
 		return frameType;

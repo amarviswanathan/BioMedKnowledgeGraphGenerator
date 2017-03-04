@@ -6,8 +6,8 @@ public class EntityMention {
 	FrameType frameType = FrameType.ENTITY_MENTION;
 	String sentenceID;
 	Sentence sentence;
-	ObjectType objectType;
-	XRef xref;
+	ObjectType objectType = ObjectType.FRAME;
+	XRefs xref;
 	String frameID;
 	String text;
 	String type;
@@ -47,10 +47,10 @@ public class EntityMention {
 	public void setObjectType(ObjectType objectType) {
 		this.objectType = objectType;
 	}
-	public XRef getXref() {
+	public XRefs getXref() {
 		return xref;
 	}
-	public void setXref(XRef xref) {
+	public void setXref(XRefs xref) {
 		this.xref = xref;
 	}
 	public String getFrameID() {

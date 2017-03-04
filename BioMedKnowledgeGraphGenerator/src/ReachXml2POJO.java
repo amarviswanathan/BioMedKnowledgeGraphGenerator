@@ -12,13 +12,19 @@ import org.w3c.dom.*;
 
 import com.sun.xml.internal.ws.util.xml.NodeListIterator;
 
+import bean.ArgumentType;
+import bean.Arguments;
 import bean.Context;
 import bean.EntityMention;
 import bean.EventMention;
+import bean.Facets;
 import bean.FrameType;
+import bean.ObjectMeta;
 import bean.ObjectType;
 import bean.Passage;
+import bean.Position;
 import bean.Sentence;
+import bean.XRefs;
 
 /**
  * 
@@ -57,9 +63,25 @@ public class ReachXml2POJO {
 			}
 		});
 		
-//		for(EntityMention entity_mention : entity_mentions) {
-//			System.out.println(entity_mention);
-//		}
+		for(EntityMention entity_mention : entity_mentions) {
+			System.out.println("Entity Mention: " + entity_mention.getFrameID());
+		}
+		
+		for(EventMention event_mention : event_mentions) {
+			System.out.println("Event Mention: " + event_mention.getFrameID());
+		}
+		
+		for(Context context : contexts) {
+			System.out.println("Context: " + context.getFrameID());
+		}
+		
+		for(Sentence sentence : sentences) {
+			System.out.println("Sentence: " + sentence.getFrameID());
+		}
+		
+		for(Passage passage : passages) {
+			System.out.println("Passage: " + passage.getFrameID());
+		}
 		System.out.println("Done");
 	}
 	
@@ -105,12 +127,28 @@ public class ReachXml2POJO {
 					break;
 					}
 					// Set Start Position
+					Element spElement = (Element) fElement.getElementsByTagName("start-pos").item(0);
+					Position sp = new Position();
+					sp.setReference(spElement.getElementsByTagName("reference").item(0).getTextContent());
+					sp.setOffset(Integer.parseInt(spElement.getElementsByTagName("offset").item(0).getTextContent()));
+					entityM.setStartPos(sp);
 					// Set End Position
+					Element epElement = (Element) fElement.getElementsByTagName("end-pos").item(0);
+					Position ep = new Position();
+					ep.setReference(epElement.getElementsByTagName("reference").item(0).getTextContent());
+					ep.setOffset(Integer.parseInt(epElement.getElementsByTagName("offset").item(0).getTextContent()));
+					entityM.setEndPos(ep);
 					// Set Xref
+					Element xElement = (Element) fElement.getElementsByTagName("xrefs").item(0);
+					XRefs xrefs = new XRefs();
+					xrefs.setID(xElement.getElementsByTagName("id").item(0).getTextContent());
+					xrefs.setNamespace(xElement.getElementsByTagName("namespace").item(0).getTextContent());
+					entityM.setXref(xrefs);
 					// Set Text
 					entityM.setText(fElement.getElementsByTagName("text").item(0).getTextContent());
 					// Set Type
 					entityM.setType(fElement.getElementsByTagName("type").item(0).getTextContent());
+					entity_mentions.add(entityM);
 				} else if(frameType.contentEquals("event-mention")) {
 					System.out.println("Found Event Mention");
 					EventMention eventM = new EventMention();
@@ -138,8 +176,23 @@ public class ReachXml2POJO {
 					break;
 					}
 					// Set Start Position
+					Element spElement = (Element) fElement.getElementsByTagName("start-pos").item(0);
+					Position sp = new Position();
+					sp.setReference(spElement.getElementsByTagName("reference").item(0).getTextContent());
+					sp.setOffset(Integer.parseInt(spElement.getElementsByTagName("offset").item(0).getTextContent()));
+					eventM.setStartPos(sp);
 					// Set End Position
+					Element epElement = (Element) fElement.getElementsByTagName("end-pos").item(0);
+					Position ep = new Position();
+					ep.setReference(epElement.getElementsByTagName("reference").item(0).getTextContent());
+					ep.setOffset(Integer.parseInt(epElement.getElementsByTagName("offset").item(0).getTextContent()));
+					eventM.setEndPos(ep);
 					// Set Xref
+					Element xElement = (Element) fElement.getElementsByTagName("xrefs").item(0);
+					XRefs xrefs = new XRefs();
+					xrefs.setID(xElement.getElementsByTagName("id").item(0).getTextContent());
+					xrefs.setNamespace(xElement.getElementsByTagName("namespace").item(0).getTextContent());
+					eventM.setXref(xrefs);
 					// Set Text
 					eventM.setText(fElement.getElementsByTagName("text").item(0).getTextContent());
 					// Set Verbose Text
@@ -151,6 +204,20 @@ public class ReachXml2POJO {
 					// Set Trigger
 					eventM.setTrigger(fElement.getElementsByTagName("trigger").item(0).getTextContent());
 					// Set Arguments
+					Element aElement = (Element) fElement.getElementsByTagName("xrefs").item(0);
+					Arguments arguments = new Arguments();
+					arguments.setArg(aElement.getElementsByTagName("arg").item(0).getTextContent());
+					arguments.setIndex(Integer.parseInt(aElement.getElementsByTagName("index").item(0).getTextContent()));
+					arguments.setText(aElement.getElementsByTagName("text").item(0).getTextContent());
+					arguments.setType(aElement.getElementsByTagName("type").item(0).getTextContent());
+					if (aElement.getElementsByTagName("argument-type").item(0).getTextContent().contentEquals("complex")) {
+						arguments.setArgumentType(ArgumentType.COMPLEX);
+					} else if (aElement.getElementsByTagName("argument-type").item(0).getTextContent().contentEquals("entity")) {
+						arguments.setArgumentType(ArgumentType.ENTITY);
+					} else if (aElement.getElementsByTagName("argument-type").item(0).getTextContent().contentEquals("event")) {
+						arguments.setArgumentType(ArgumentType.EVENT);
+					} 
+					eventM.setArguments(arguments);
 					// Set isDirect
 					if(fElement.getElementsByTagName("is-direct").item(0).getTextContent().contentEquals("true")){
 						eventM.setIsDirect(true);
@@ -167,12 +234,14 @@ public class ReachXml2POJO {
 					eventM.setFoundBy(fElement.getElementsByTagName("found-by").item(0).getTextContent());
 					// Set Context ID String
 					eventM.setContextID(fElement.getElementsByTagName("context").item(0).getTextContent());
-					
+					event_mentions.add(eventM);
 				} else if(frameType.contentEquals("context")) {
 					System.out.println("Found Context");
 					Context context = new Context();
 					// Set Frame ID
 					context.setFrameID(fElement.getElementsByTagName("frame-id").item(0).getTextContent());
+					// Set Scope ID
+					context.setScopeID(fElement.getElementsByTagName("scope").item(0).getTextContent());
 					// Set Object Type
 					switch (fElement.getElementsByTagName("object-type").item(0).getTextContent()) {
 					case "frame" : context.setObjectType(ObjectType.FRAME);
@@ -192,6 +261,15 @@ public class ReachXml2POJO {
 					case "argument" : context.setObjectType(ObjectType.ARGUMENT);
 					break;
 					}
+					// Set Facets
+					Element facetElement = (Element) fElement.getElementsByTagName("facets").item(0);
+					Facets facets = new Facets();
+					facets.setLocation(facetElement.getElementsByTagName("location").item(0).getTextContent());
+					facets.setCellLine(facetElement.getElementsByTagName("cell-line").item(0).getTextContent());
+					facets.setOrganism(facetElement.getElementsByTagName("organism").item(0).getTextContent());
+					facets.setTissueType(facetElement.getElementsByTagName("tissue-type").item(0).getTextContent());
+					context.setFacets(facets);
+					contexts.add(context);
 				} else if(frameType.contentEquals("sentence")) {
 					System.out.println("Found Sentence");
 					Sentence sentence = new Sentence();
@@ -219,11 +297,25 @@ public class ReachXml2POJO {
 					break;
 					}
 					// Set Start Position
+					Element spElement = (Element) fElement.getElementsByTagName("start-pos").item(0);
+					Position sp = new Position();
+					sp.setReference(spElement.getElementsByTagName("reference").item(0).getTextContent());
+					sp.setOffset(Integer.parseInt(spElement.getElementsByTagName("offset").item(0).getTextContent()));
+					sentence.setStartPos(sp);
 					// Set End Position
+					Element epElement = (Element) fElement.getElementsByTagName("end-pos").item(0);
+					Position ep = new Position();
+					ep.setReference(epElement.getElementsByTagName("reference").item(0).getTextContent());
+					ep.setOffset(Integer.parseInt(epElement.getElementsByTagName("offset").item(0).getTextContent()));
+					sentence.setEndPos(ep);
 					// Set Object Meta
-					//sentence.setObjectMeta(fElement.getElementsByTagName("object-meta").item(0).getTextContent());
+					Element omElement = (Element) fElement.getElementsByTagName("object-meta").item(0);
+					ObjectMeta om = new ObjectMeta();
+					om.setComponent(omElement.getElementsByTagName("component").item(0).getTextContent());
+					sentence.setObjectMeta(om);
 					// Set Text
 					sentence.setText(fElement.getElementsByTagName("text").item(0).getTextContent());
+					sentences.add(sentence);
 				} else if(frameType.contentEquals("passage")) {
 					System.out.println("Found Passage");
 					Passage passage = new Passage();
@@ -259,15 +351,17 @@ public class ReachXml2POJO {
 						break;
 					}
 					// Set Object Meta
-					//passage.setObjectMeta(fElement.getElementsByTagName("object-meta").item(0).getTextContent());
+					Element omElement = (Element) fElement.getElementsByTagName("object-meta").item(0);
+					ObjectMeta om = new ObjectMeta();
+					om.setComponent(omElement.getElementsByTagName("component").item(0).getTextContent());
+					passage.setObjectMeta(om);
 					// Set Text
 					passage.setText(fElement.getElementsByTagName("text").item(0).getTextContent());
+					passages.add(passage);
 				} else {
 					System.out.println("Found Unknown Frame Type");
 				}
 			}
-//			EventMention em = new EventMention();
-//			event_mentions.add(em);
 			
 		}
 		

@@ -2,7 +2,7 @@ package bean;
 
 public class Facets {
 	String organism;
-	ObjectType objectType;
+	ObjectType objectType = ObjectType.FACET_SET;
 	String location;
 	String cellLine;
 	String tissueType;
@@ -14,9 +14,6 @@ public class Facets {
 	}
 	public ObjectType getObjectType() {
 		return objectType;
-	}
-	public void setObjectType(ObjectType objectType) {
-		this.objectType = objectType;
 	}
 	public String getLocation() {
 		return location;

@@ -7,7 +7,7 @@ public class Sentence {
 	Passage passage;
 	FrameType frameType = FrameType.SENTENCE;
 	ObjectType objectType;
-	String objectMeta;
+	ObjectMeta objectMeta;
 	String frameID;
 	String text;
 	public Position getStartPos() {
@@ -46,10 +46,10 @@ public class Sentence {
 	public void setObjectType(ObjectType objectType) {
 		this.objectType = objectType;
 	}
-	public String getObjectMeta() {
+	public ObjectMeta getObjectMeta() {
 		return objectMeta;
 	}
-	public void setObjectMeta(String objectMeta) {
+	public void setObjectMeta(ObjectMeta objectMeta) {
 		this.objectMeta = objectMeta;
 	}
 	public String getFrameID() {

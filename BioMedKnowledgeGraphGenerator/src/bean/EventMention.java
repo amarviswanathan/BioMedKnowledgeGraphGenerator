@@ -8,7 +8,7 @@ public class EventMention {
 	Position endPos;
 	FrameType frameType = FrameType.EVENT_MENTION;
 	ObjectType objectType;
-	XRef xref;
+	XRefs xref;
 	String frameID;
 	String text;
 	String verboseText;
@@ -62,10 +62,10 @@ public class EventMention {
 	public void setObjectType(ObjectType objectType) {
 		this.objectType = objectType;
 	}
-	public XRef getXref() {
+	public XRefs getXref() {
 		return xref;
 	}
-	public void setXref(XRef xref) {
+	public void setXref(XRefs xref) {
 		this.xref = xref;
 	}
 	public String getFrameID() {
