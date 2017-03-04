@@ -7,7 +7,8 @@ public class ObjectMeta {
 		return component;
 	}
 	public void setComponent(String component) {
-		this.component = component;
+		if(component!=null)
+			this.component = component;
 	}
 	public ObjectType getObjectType() {
 		return objectType;

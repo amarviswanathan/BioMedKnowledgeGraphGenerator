@@ -8,7 +8,8 @@ public class Position {
 		return referenceID;
 	}
 	public void setReference(String referenceID) {
-		this.referenceID = referenceID;
+		if(referenceID!=null)
+			this.referenceID = referenceID;
 	}
 	public int getOffset() {
 		return offset;

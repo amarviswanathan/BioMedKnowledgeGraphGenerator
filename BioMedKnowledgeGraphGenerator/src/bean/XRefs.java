@@ -11,12 +11,14 @@ public class XRefs {
 		return namespace;
 	}
 	public void setNamespace(String namespace) {
-		this.namespace = namespace;
+		if(namespace!=null)
+			this.namespace = namespace;
 	}
 	public String getID() {
 		return this.ID;
 	}
 	public void setID(String ID) {
-		this.ID = ID;
+		if(ID!=null)
+			this.ID = ID;
 	}
 }

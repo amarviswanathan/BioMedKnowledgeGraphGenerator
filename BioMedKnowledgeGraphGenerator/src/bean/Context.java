@@ -17,7 +17,8 @@ public class Context {
 		return scopeID;
 	}
 	public void setScopeID(String scopeID) {
-		this.scopeID = scopeID;
+		if(scopeID!=null)
+			this.scopeID = scopeID;
 	}
 	public FrameType getFrameType() {
 		return frameType;
@@ -35,7 +36,8 @@ public class Context {
 		return frameID;
 	}
 	public void setFrameID(String frameID) {
-		this.frameID = frameID;
+		if(frameID!=null)
+			this.frameID = frameID;
 	}
 	public Facets getFacets() {
 		return facets;

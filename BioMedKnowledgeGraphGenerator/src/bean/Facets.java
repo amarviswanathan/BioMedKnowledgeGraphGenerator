@@ -10,7 +10,8 @@ public class Facets {
 		return organism;
 	}
 	public void setOrganism(String organism) {
-		this.organism = organism;
+		if(organism!=null)
+			this.organism = organism;
 	}
 	public ObjectType getObjectType() {
 		return objectType;
@@ -19,18 +20,21 @@ public class Facets {
 		return location;
 	}
 	public void setLocation(String location) {
-		this.location = location;
+		if(location!=null)
+			this.location = location;
 	}
 	public String getCellLine() {
 		return cellLine;
 	}
 	public void setCellLine(String cellLine) {
-		this.cellLine = cellLine;
+		if(cellLine!=null)
+			this.cellLine = cellLine;
 	}
 	public String getTissueType() {
 		return tissueType;
 	}
 	public void setTissueType(String tissueType) {
-		this.tissueType = tissueType;
+		if(tissueType!=null)
+			this.tissueType = tissueType;
 	}
 }

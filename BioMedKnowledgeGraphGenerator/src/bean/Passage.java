@@ -50,13 +50,15 @@ public class Passage {
 		return frameID;
 	}
 	public void setFrameID(String frameID) {
-		this.frameID = frameID;
+		if(frameID!=null)
+			this.frameID = frameID;
 	}
 	public String getText() {
 		return text;
 	}
 	public void setText(String text) {
-		this.text = text;
+		if(text!=null)
+			this.text = text;
 	}
 	public int getIndex() {
 		return index;

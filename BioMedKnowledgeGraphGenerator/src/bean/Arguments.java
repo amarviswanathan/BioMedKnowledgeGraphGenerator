@@ -11,7 +11,8 @@ public class Arguments {
 		return arg;
 	}
 	public void setArg(String arg) {
-		this.arg = arg;
+		if(arg!=null)
+			this.arg = arg;
 	}
 	public int getIndex() {
 		return index;
@@ -29,13 +30,15 @@ public class Arguments {
 		return text;
 	}
 	public void setText(String text) {
-		this.text = text;
+		if(text!=null)
+			this.text = text;
 	}
 	public String getType() {
 		return type;
 	}
 	public void setType(String type) {
-		this.type = type;
+		if(type!=null)
+			this.type = type;
 	}
 	public ObjectType getObjectType() {
 		return objectType;

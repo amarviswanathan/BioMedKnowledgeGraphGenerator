@@ -8,7 +8,7 @@ public class EventMention {
 	Position endPos;
 	FrameType frameType = FrameType.EVENT_MENTION;
 	ObjectType objectType;
-	XRefs xref;
+//	XRefs xref;
 	String frameID;
 	String text;
 	String verboseText;
@@ -29,8 +29,9 @@ public class EventMention {
 	public String getSentenceID() {
 		return sentenceID;
 	}
-	public void setSentenceID(String sentence) {
-		this.sentenceID = sentence;
+	public void setSentenceID(String sentenceID) {
+		if(sentenceID!=null)
+			this.sentenceID = sentenceID;
 	}
 	public Sentence getSentence() {
 		return sentence;
@@ -62,12 +63,12 @@ public class EventMention {
 	public void setObjectType(ObjectType objectType) {
 		this.objectType = objectType;
 	}
-	public XRefs getXref() {
+/*	public XRefs getXref() {
 		return xref;
 	}
 	public void setXref(XRefs xref) {
 		this.xref = xref;
-	}
+	}*/
 	public String getFrameID() {
 		return frameID;
 	}
@@ -78,31 +79,36 @@ public class EventMention {
 		return text;
 	}
 	public void setText(String text) {
-		this.text = text;
+		if(text!=null)
+			this.text = text;
 	}
 	public String getVerboseText() {
 		return verboseText;
 	}
 	public void setVerboseText(String verboseText) {
-		this.verboseText = verboseText;
+		if(verboseText!=null)
+			this.verboseText = verboseText;
 	}
 	public String getType() {
 		return type;
 	}
 	public void setType(String type) {
-		this.type = type;
+		if(type!=null)
+			this.type = type;
 	}
 	public String getTrigger() {
 		return trigger;
 	}
 	public void setTrigger(String trigger) {
-		this.trigger = trigger;
+		if(trigger!=null)
+			this.trigger = trigger;
 	}
 	public String getSubType() {
 		return subType;
 	}
 	public void setSubType(String subType) {
-		this.subType = subType;
+		if(subType!=null)
+			this.subType = subType;
 	}
 	public Context getContext() {
 		return context;
@@ -114,7 +120,8 @@ public class EventMention {
 		return contextID;
 	}
 	public void setContextID(String contextID) {
-		this.contextID = contextID;
+		if(contextID!=null)
+			this.contextID = contextID;
 	}
 	public Arguments getArguments() {
 		return arguments;
@@ -132,6 +139,7 @@ public class EventMention {
 		return foundBy;
 	}
 	public void setFoundBy(String foundBy) {
-		this.foundBy = foundBy;
+		if(foundBy!=null)
+			this.foundBy = foundBy;
 	}
 }

@@ -189,10 +189,12 @@ public class ReachXml2POJO {
 					eventM.setEndPos(ep);
 					// Set Xref
 					Element xElement = (Element) fElement.getElementsByTagName("xrefs").item(0);
-					XRefs xrefs = new XRefs();
-					xrefs.setID(xElement.getElementsByTagName("id").item(0).getTextContent());
-					xrefs.setNamespace(xElement.getElementsByTagName("namespace").item(0).getTextContent());
-					eventM.setXref(xrefs);
+					/*XRefs xrefs = new XRefs();
+					if(xElement.getElementsByTagName("id").item(0)!=null)
+						xrefs.setID(xElement.getElementsByTagName("id").item(0).getTextContent());
+					if(xElement.getElementsByTagName("namespace").item(0)!=null)
+						xrefs.setNamespace(xElement.getElementsByTagName("namespace").item(0).getTextContent());
+					eventM.setXref(xrefs);*/
 					// Set Text
 					eventM.setText(fElement.getElementsByTagName("text").item(0).getTextContent());
 					// Set Verbose Text
@@ -200,40 +202,54 @@ public class ReachXml2POJO {
 					// Set Type
 					eventM.setType(fElement.getElementsByTagName("type").item(0).getTextContent());
 					// Set SubType
-					eventM.setSubType(fElement.getElementsByTagName("subtype").item(0).getTextContent());
+					if(fElement.getElementsByTagName("subtype").item(0)!=null)
+						eventM.setSubType(fElement.getElementsByTagName("subtype").item(0).getTextContent());
 					// Set Trigger
-					eventM.setTrigger(fElement.getElementsByTagName("trigger").item(0).getTextContent());
+					if(fElement.getElementsByTagName("trigger").item(0)!=null)
+						eventM.setTrigger(fElement.getElementsByTagName("trigger").item(0).getTextContent());
 					// Set Arguments
-					Element aElement = (Element) fElement.getElementsByTagName("xrefs").item(0);
+					Element aElement = (Element) fElement.getElementsByTagName("arguments").item(0);
 					Arguments arguments = new Arguments();
-					arguments.setArg(aElement.getElementsByTagName("arg").item(0).getTextContent());
-					arguments.setIndex(Integer.parseInt(aElement.getElementsByTagName("index").item(0).getTextContent()));
-					arguments.setText(aElement.getElementsByTagName("text").item(0).getTextContent());
-					arguments.setType(aElement.getElementsByTagName("type").item(0).getTextContent());
-					if (aElement.getElementsByTagName("argument-type").item(0).getTextContent().contentEquals("complex")) {
-						arguments.setArgumentType(ArgumentType.COMPLEX);
-					} else if (aElement.getElementsByTagName("argument-type").item(0).getTextContent().contentEquals("entity")) {
-						arguments.setArgumentType(ArgumentType.ENTITY);
-					} else if (aElement.getElementsByTagName("argument-type").item(0).getTextContent().contentEquals("event")) {
-						arguments.setArgumentType(ArgumentType.EVENT);
-					} 
+					if(aElement.getElementsByTagName("arg").item(0)!=null)
+						arguments.setArg(aElement.getElementsByTagName("arg").item(0).getTextContent());
+					if(aElement.getElementsByTagName("index").item(0)!=null)
+						arguments.setIndex(Integer.parseInt(aElement.getElementsByTagName("index").item(0).getTextContent()));
+					if(aElement.getElementsByTagName("text").item(0)!=null)
+						arguments.setText(aElement.getElementsByTagName("text").item(0).getTextContent());
+					if(aElement.getElementsByTagName("type").item(0)!=null)
+						arguments.setType(aElement.getElementsByTagName("type").item(0).getTextContent());
+					if(aElement.getElementsByTagName("argument-type").item(0)!=null){
+						if (aElement.getElementsByTagName("argument-type").item(0).getTextContent().contentEquals("complex")) {
+							arguments.setArgumentType(ArgumentType.COMPLEX);
+						} else if (aElement.getElementsByTagName("argument-type").item(0).getTextContent().contentEquals("entity")) {
+							arguments.setArgumentType(ArgumentType.ENTITY);
+						} else if (aElement.getElementsByTagName("argument-type").item(0).getTextContent().contentEquals("event")) {
+							arguments.setArgumentType(ArgumentType.EVENT);
+						}
+					}
 					eventM.setArguments(arguments);
 					// Set isDirect
-					if(fElement.getElementsByTagName("is-direct").item(0).getTextContent().contentEquals("true")){
-						eventM.setIsDirect(true);
-					} else if (fElement.getElementsByTagName("is-direct").item(0).getTextContent().contentEquals("false")) {
-						eventM.setIsDirect(false);
+					if(fElement.getElementsByTagName("is-direct").item(0)!=null){
+						if(fElement.getElementsByTagName("is-direct").item(0).getTextContent().contentEquals("true")){
+							eventM.setIsDirect(true);
+						} else if (fElement.getElementsByTagName("is-direct").item(0).getTextContent().contentEquals("false")) {
+							eventM.setIsDirect(false);
+						}
 					}
 					// Set isHypothesis
-					if(fElement.getElementsByTagName("is-hypothesis").item(0).getTextContent().contentEquals("true")){
-						eventM.setIsHypothesis(true);
-					} else if (fElement.getElementsByTagName("is-hypothesis").item(0).getTextContent().contentEquals("false")) {
-						eventM.setIsHypothesis(false);
+					if(fElement.getElementsByTagName("is-hypothesis").item(0)!=null){
+						if(fElement.getElementsByTagName("is-hypothesis").item(0).getTextContent().contentEquals("true")){
+							eventM.setIsHypothesis(true);
+						} else if (fElement.getElementsByTagName("is-hypothesis").item(0).getTextContent().contentEquals("false")) {
+							eventM.setIsHypothesis(false);
+						}
 					}
 					// Set Found By
-					eventM.setFoundBy(fElement.getElementsByTagName("found-by").item(0).getTextContent());
+					if(fElement.getElementsByTagName("found-by").item(0)!=null)
+						eventM.setFoundBy(fElement.getElementsByTagName("found-by").item(0).getTextContent());
 					// Set Context ID String
-					eventM.setContextID(fElement.getElementsByTagName("context").item(0).getTextContent());
+					if(fElement.getElementsByTagName("context").item(0)!=null)
+						eventM.setContextID(fElement.getElementsByTagName("context").item(0).getTextContent());
 					event_mentions.add(eventM);
 				} else if(frameType.contentEquals("context")) {
 					System.out.println("Found Context");
@@ -264,10 +280,14 @@ public class ReachXml2POJO {
 					// Set Facets
 					Element facetElement = (Element) fElement.getElementsByTagName("facets").item(0);
 					Facets facets = new Facets();
-					facets.setLocation(facetElement.getElementsByTagName("location").item(0).getTextContent());
-					facets.setCellLine(facetElement.getElementsByTagName("cell-line").item(0).getTextContent());
-					facets.setOrganism(facetElement.getElementsByTagName("organism").item(0).getTextContent());
-					facets.setTissueType(facetElement.getElementsByTagName("tissue-type").item(0).getTextContent());
+					if(facetElement.getElementsByTagName("location").item(0)!=null)
+						facets.setLocation(facetElement.getElementsByTagName("location").item(0).getTextContent());
+					if(facetElement.getElementsByTagName("cell-line").item(0)!=null)
+						facets.setCellLine(facetElement.getElementsByTagName("cell-line").item(0).getTextContent());
+					if(facetElement.getElementsByTagName("organism").item(0)!=null)
+						facets.setOrganism(facetElement.getElementsByTagName("organism").item(0).getTextContent());
+					if(facetElement.getElementsByTagName("tissue-type").item(0)!=null)
+						facets.setTissueType(facetElement.getElementsByTagName("tissue-type").item(0).getTextContent());
 					context.setFacets(facets);
 					contexts.add(context);
 				} else if(frameType.contentEquals("sentence")) {

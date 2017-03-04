@@ -32,7 +32,8 @@ public class Sentence {
 		return passageID;
 	}
 	public void setPassageID(String passageID) {
-		this.passageID = passageID;
+		if(passageID!=null)
+			this.passageID = passageID;
 	}
 	public FrameType getFrameType() {
 		return frameType;
@@ -56,12 +57,14 @@ public class Sentence {
 		return frameID;
 	}
 	public void setFrameID(String frameID) {
-		this.frameID = frameID;
+		if(frameID!=null)
+			this.frameID = frameID;
 	}
 	public String getText() {
 		return text;
 	}
 	public void setText(String text) {
-		this.text = text;
+		if(text!=null)
+			this.text = text;
 	}
 }

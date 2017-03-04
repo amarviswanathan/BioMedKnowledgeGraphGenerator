@@ -33,7 +33,8 @@ public class EntityMention {
 		return sentenceID;
 	}
 	public void setSentenceID(String sentenceID) {
-		this.sentenceID = sentenceID;
+		if(sentenceID!=null)
+			this.sentenceID = sentenceID;
 	}
 	public Sentence getSentence() {
 		return sentence;
@@ -57,18 +58,21 @@ public class EntityMention {
 		return frameID;
 	}
 	public void setFrameID(String frameID) {
-		this.frameID = frameID;
+		if(frameID!=null)
+			this.frameID = frameID;
 	}
 	public String getText() {
 		return text;
 	}
 	public void setText(String text) {
-		this.text = text;
+		if(text!=null)
+			this.text = text;
 	}
 	public String getType() {
 		return type;
 	}
 	public void setType(String type) {
-		this.type = type;
+		if(type!=null)
+			this.type = type;
 	}
 }
