@@ -21,10 +21,10 @@ import com.sun.xml.internal.ws.util.xml.NodeListIterator;
  *
  */
 public class ReachXml2Rdf {
-	
+
 	//TODO move these to a property file
-//	public static final String READ_LOCATION = "/home/amar/Data/xml/";
-//	public static final String WRITE_LOCATION = "/home/amar/Data/rdf/";
+	//	public static final String READ_LOCATION = "/home/amar/Data/xml/";
+	//	public static final String WRITE_LOCATION = "/home/amar/Data/rdf/";
 	public static final String READ_LOCATION = "/home/sabbir/Programs/xml/";
 	public static final String WRITE_LOCATION = "home/sabbir/Programs/rdf/";
 	static Set<String> types = new HashSet<String>();
@@ -33,7 +33,7 @@ public class ReachXml2Rdf {
 	 */
 	public static void main(String[] args) throws Exception{
 		// TODO Auto-generated method stub
-		
+
 		Files.newDirectoryStream(Paths.get(READ_LOCATION),
 				path -> path.toString().contains(".entities"))
 		.forEach(s -> {
@@ -44,32 +44,29 @@ public class ReachXml2Rdf {
 				e.printStackTrace();
 			}
 		});
-		
+
 		for(String type : types) {
 			System.out.println(type);
 		}
 	}
-	
+
 	public static void readXml(String fileName) throws Exception {
-		
+
 		File xmlFile = new File(fileName);
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = dbFactory.newDocumentBuilder();
-		
+
 		Document doc = builder.parse(xmlFile);
-		
+
 		NodeList nodeList = doc.getElementsByTagName("location");
-		
+
 		for(int i = 0; i<nodeList.getLength(); i++) {
-			
+
 			Node node = nodeList.item(i);
-//			System.out.println(node.getTextContent());
-			String nodeContent = node.getTextContent();
-			if(!nodeContent.contains("uniprot"))
-				types.add(node.getTextContent());
-			
+			types.add(node.getTextContent());
+
 		}
-		
+
 	}
 
 }
