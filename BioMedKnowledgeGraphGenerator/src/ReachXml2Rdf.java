@@ -35,7 +35,7 @@ public class ReachXml2Rdf {
 		// TODO Auto-generated method stub
 		
 		Files.newDirectoryStream(Paths.get(READ_LOCATION),
-				path -> path.toString().contains(".entities"))
+				path -> path.toString().contains(".sentences"))
 		.forEach(s -> {
 			try {
 				readXml(s.toString());
@@ -58,7 +58,7 @@ public class ReachXml2Rdf {
 		
 		Document doc = builder.parse(xmlFile);
 		
-		NodeList nodeList = doc.getElementsByTagName("xrefs");
+		NodeList nodeList = doc.getElementsByTagName("argument-type");
 		
 		for(int i = 0; i<nodeList.getLength(); i++) {
 			
