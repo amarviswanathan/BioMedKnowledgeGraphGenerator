@@ -69,7 +69,227 @@ public class ReachXml2POJO {
 				e.printStackTrace();
 			}
 		});
-
+		System.out.println("Printing Entity Mention TTL to file");
+		String prefixes="@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .\n" +
+				"@prefix sio:     <http://semanticscience.org/resource/> .\n" + 
+				"@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n" +
+				"@prefix kgeds: 	<http://localhost/kged/schema#>.\n" + 
+				"@prefix kged-kd: 	<http://localhost/kged/kb#>.\n" +
+				"@prefix kged: 	<http://localhost/kged/ont#>.\n" + 
+				"@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n";
+		try{
+		    PrintWriter writer = new PrintWriter(WRITE_LOCATION + "entity_mentions.ttl", "UTF-8");
+		    writer.println(prefixes);
+		    for(EntityMention entity_mention : entity_mentions) {
+		    	System.out.println("Entity Mention: " + entity_mention.getFrameID());
+			    writer.println("<kged-kb:" + entity_mention.getFrameID() + "> a <kged:EntityMention> ;");
+			    writer.println("\trdfs:label \"" + entity_mention.getText() + "\" ;");
+			    writer.println("\tkgeds:hasType \"" + entity_mention.getType() + "\" ;");
+			    writer.println("\tkgeds:hasFrameType <kged:Frame-" + entity_mention.getFrameType().toString() + "> ;");
+			    writer.println("\tkgeds:hasObjectType <kged:ObjectType-" + entity_mention.getObjectType().toString() + "> ;");
+			    writer.println("\tkgeds:hasStartPositionReference <kged-kb:" + entity_mention.getStartPos().getReference() + "> ;");
+                writer.println("\tkgeds:hasStartPositionOffset \"" + entity_mention.getStartPos().getOffset() + "\" ;");
+                writer.println("\tkgeds:hasStartPositionObjectType <kged:ObjectType-" + entity_mention.getStartPos().getObjectType().toString() + "> ;");
+			    writer.println("\tkgeds:hasEndPositionReference <kged-kb:" + entity_mention.getEndPos().getReference() + "> ;");
+                writer.println("\tkgeds:hasEndPositionOffset \"" + entity_mention.getEndPos().getOffset() + "\" ;");
+                writer.println("\tkgeds:hasEndPositionObjectType <kged:ObjectType-" + entity_mention.getEndPos().getObjectType().toString() + "> ;");
+                writer.println("\tkgeds:fromSentence <kged-kb:" + entity_mention.getSentenceID() + "> ;");
+			    writer.println("\tkgeds:hasXrefID \"" + entity_mention.getXref().getID() + "\" ;");
+			    writer.println("\tkgeds:hasXrefNamespace \"" + entity_mention.getXref().getNamespace() + "\" ;");
+			    writer.println("\tkgeds:hasXrefObjectType <kged:ObjectType-" + entity_mention.getXref().getObjectType().toString() + "> .");
+			    writer.println("");
+		    }
+		    writer.close();
+		} catch (IOException e) {
+			   // do something
+		}
+		
+		System.out.println("Printing Event Mention TTL to file");
+		try{
+		    PrintWriter writer = new PrintWriter(WRITE_LOCATION + "event_mentions.ttl", "UTF-8");
+		    writer.println(prefixes);
+		    for(EventMention event_mention : event_mentions) {
+				System.out.println("Event Mention: " + event_mention.getFrameID());
+				writer.println("<kged-kb:" + event_mention.getFrameID() + "> a <kged:EventMention> ;");
+				writer.println("\tkgeds:hasFrameType <kged:Frame-" + event_mention.getFrameType().toString() + "> ;");
+				writer.println("\tkgeds:hasObjectType <kged:ObjectType-" + event_mention.getObjectType().toString() + "> ;");
+			    writer.println("\trdfs:label \"" + event_mention.getText() + "\" ;");
+				//writer.println("\trdfs:comment \"" + event_mention.getVerboseText() + "\" ;");
+				writer.println("\tkgeds:hasType \"" + event_mention.getType() + "\" ;");
+			    writer.println("\tkgeds:hasSubType \"" + event_mention.getSubType() + "\" ;");
+			    writer.println("\tkgeds:hasStartPositionReference <kged-kb:" + event_mention.getStartPos().getReference() + "> ;");
+                writer.println("\tkgeds:hasStartPositionOffset \"" + event_mention.getStartPos().getOffset() + "\" ;");
+                writer.println("\tkgeds:hasStartPositionObjectType <kged:ObjectType-" + event_mention.getStartPos().getObjectType().toString() + "> ;");
+			    writer.println("\tkgeds:hasEndPositionReference <kged-kb:" + event_mention.getEndPos().getReference() + "> ;");
+                writer.println("\tkgeds:hasEndPositionOffset \"" + event_mention.getEndPos().getOffset() + "\" ;");
+                writer.println("\tkgeds:hasEndPositionObjectType <kged:ObjectType-" + event_mention.getEndPos().getObjectType().toString() + "> ;");
+                writer.println("\tkgeds:fromSentence <kged-kb:" + event_mention.getSentenceID() + "> ;");
+			    writer.println("\tkgeds:hasContext <kged-kb:" + event_mention.getContextID() + "> ;");
+			    writer.println("\tkgeds:foundBy \"" + event_mention.getFoundBy() + "\" ;");
+			    writer.println("\tkgeds:hasTrigger \"" + event_mention.getTrigger() + "\" ;");
+			    writer.println("\tkgeds:hasArgument <kged-kb:" + event_mention.getArguments().getArg() + "> ;");
+			    writer.println("\tkgeds:hasArgumentObjectType <kged:ObjectType-" + event_mention.getArguments().getObjectType().toString() + "> ;");
+			    writer.println("\tkgeds:hasArgumentIndex " + event_mention.getArguments().getIndex() + " ;");
+			    writer.println("\tkgeds:hasArgumentArgumentType <kged-Argument:" + event_mention.getArguments().getArgumentType() + "> ;");
+			    writer.println("\tkgeds:hasArgumentType \"" + event_mention.getArguments().getType() + "\" ;");
+			    writer.println("\tkgeds:hasArgumentLabel \"" + event_mention.getArguments().getText() + "\" ;");
+			    writer.println("\tkgeds:boolIsDirect \"" + event_mention.getIsDirect() + "\" ;");
+			    writer.println("\tkgeds:boolIsHypothesis \"" + event_mention.getIsHypothesis()+ "\" .");
+			    writer.println("");
+		    }
+		    writer.close();
+		} catch (IOException e) {
+			   // do something
+		}
+		
+		try{
+		    PrintWriter writer = new PrintWriter(WRITE_LOCATION + "contexts.ttl", "UTF-8");
+		    writer.println(prefixes);
+		    for(Context context : contexts) {
+				System.out.println("Context: " + context.getFrameID());
+				writer.println("<kged-kb:" + context.getFrameID() + "> a <kged:Context> ;");
+				writer.println("\tkgeds:hasFrameType <kged:Frame-" + context.getFrameType().toString() + "> ;");
+				writer.println("\tkgeds:hasScope <kged-kb:" + context.getScopeID() + "> ;");
+			    if(context.getFacets()!=null){
+			    	writer.println("\tkgeds:hasFacetObjectType <kged:ObjectType-" + context.getFacets().getObjectType().toString() + "> ;");
+			    	if(context.getFacets().getLocation()!=null)
+			    		writer.println("\tkgeds:hasFacetLocation \"" + context.getFacets().getLocation() + "\" ;");
+			    	if(context.getFacets().getCellLine()!=null)
+			    		writer.println("\tkgeds:hasFacetCellLine \"" + context.getFacets().getCellLine() + "\" ;");
+			    	if(context.getFacets().getOrganism()!=null)
+			    		writer.println("\tkgeds:hasFacetOrganism \"" + context.getFacets().getOrganism() + "\" ;");
+			    	if(context.getFacets().getTissueType()!=null)
+			    		writer.println("\tkgeds:hasFacetTissueType \"" + context.getFacets().getTissueType() + "\" ;");
+			    }
+				writer.println("\tkgeds:hasObjectType <kged:ObjectType-" + context.getObjectType().toString() + "> .");
+			    writer.println("");
+		    }
+		    writer.close();
+		} catch (IOException e) {
+			   // do something		
+		}
+		
+		try{
+		    PrintWriter writer = new PrintWriter(WRITE_LOCATION + "sentences.ttl", "UTF-8");
+		    writer.println(prefixes);
+		    for(Sentence sentence : sentences) {
+		    	System.out.println("Sentence: " + sentence.getFrameID());
+				writer.println("<kged-kb:" + sentence.getFrameID() + "> a <kged:Sentence> ;");
+				writer.println("\tkgeds:hasFrameType <kged:Frame-" + sentence.getFrameType().toString() + "> ;");
+				writer.println("\tkgeds:fromPassage <kged-kb:" + sentence.getPassageID() + "> ;");
+		    	//writer.println("\tkgeds:hasContent \"" + sentence.getText() + "\" ;");
+		    	if(sentence.getObjectMeta()!=null){
+		    		writer.println("\tkgeds:hasMetaObjectComponent \"" + sentence.getObjectMeta().getComponent() + "\" ;");
+		    		writer.println("\tkgeds:hasMetaObjectType <kged:ObjectType-" + sentence.getObjectMeta().getObjectType().toString() + "> ;");
+		    	}
+		    	writer.println("\tkgeds:hasStartPositionReference <kged-kb:" + sentence.getStartPos().getReference() + "> ;");
+                writer.println("\tkgeds:hasStartPositionOffset \"" + sentence.getStartPos().getOffset() + "\" ;");
+                writer.println("\tkgeds:hasStartPositionObjectType <kged:ObjectType-" + sentence.getStartPos().getObjectType().toString() + "> ;");
+			    writer.println("\tkgeds:hasEndPositionReference <kged-kb:" + sentence.getEndPos().getReference() + "> ;");
+                writer.println("\tkgeds:hasEndPositionOffset \"" + sentence.getEndPos().getOffset() + "\" ;");
+                writer.println("\tkgeds:hasEndPositionObjectType <kged:ObjectType-" + sentence.getEndPos().getObjectType().toString() + "> ;");
+                writer.println("\tkgeds:hasObjectType <kged:ObjectType-" + sentence.getObjectType().toString() + "> .");
+			    writer.println("");
+			    }
+		    writer.close();
+		} catch (IOException e) {
+		   // do something		
+		}    
+		
+		try{
+		    PrintWriter writer = new PrintWriter(WRITE_LOCATION + "passages.ttl", "UTF-8");
+		    writer.println(prefixes);
+		    for(Passage passage : passages) {
+		    	System.out.println("Passage: " + passage.getFrameID());
+		    	writer.println("<kged-kb:" + passage.getFrameID() + "> a <kged:Passage> ;");
+		    	writer.println("\tkgeds:hasFrameType <kged:Frame-" + passage.getFrameType().toString() + "> ;");
+				writer.println("\tkgeds:hasIndex " + passage.getIndex() + " ;");
+		    	writer.println("\tkgeds:hasSectionID \"" + passage.getSectionID()  + "\" ;");
+		    	writer.println("\tkgeds:hasSectionName \"" + passage.getSectionName() + "\" ;");
+		    	//writer.println("\tkgeds:hasContent \"" + passage.getText()+ "\" ;");
+		    	if(passage.getObjectMeta()!=null){
+		    		writer.println("\tkgeds:hasMetaObjectComponent \"" + passage.getObjectMeta().getComponent() + "\" ;");
+		    		writer.println("\tkgeds:hasMetaObjectType <kged:ObjectType-" + passage.getObjectMeta().getObjectType().toString() + "> ;");
+		    	}
+		    	writer.println("\tkgeds:hasObjectType <kged:ObjectType-" + passage.getObjectType().toString() + "> ;");
+			    writer.println("\tkgeds:boolIsTitle \"" + passage.getIsTitle() + "\" .");
+			    writer.println("");
+		    }
+		    writer.close();
+		} catch (IOException e) {
+		   // do something		
+		}
+		
+/*		System.out.println("Assigning Passages to Sentences");
+		for(Sentence sentence : sentences) {
+			if(sentence.getPassageID()!=null){
+				System.out.println("Searching for: " + sentence.getPassageID());
+				for (Passage passage : passages){
+					if(passage.getFrameID().equals(sentence.getPassageID())){
+						System.out.println("Found " + passage.getFrameID());
+						sentence.setPassage(passage);
+						break;
+					}
+				}
+			}
+		}
+		
+		System.out.println("Assigning Sentences to Contexts");
+		for(Context context : contexts) {
+			if(context.getScopeID()!=null){
+				System.out.println("Searching for: " + context.getScopeID());
+				for (Sentence sentence : sentences){
+					if(sentence.getFrameID().equals(context.getScopeID())){
+						System.out.println("Found " + sentence.getFrameID());
+						context.setScope(sentence);
+						break;
+					}
+				}
+			}
+		}
+		
+		System.out.println("Assigning Sentences to Entity Mentions");
+		for(EntityMention entity_mention : entity_mentions) {
+			if(entity_mention.getSentenceID()!=null){
+				System.out.println("Searching for: " + entity_mention.getSentenceID());
+				for (Sentence sentence : sentences){
+					if(sentence.getFrameID().equals(entity_mention.getSentenceID())){
+						System.out.println("Found " + sentence.getFrameID());
+						entity_mention.setSentence(sentence);
+						break;
+					}
+				}
+			}
+		}
+		
+		System.out.println("Assigning Sentences and Contexts to Event Mentions");
+		for(EventMention event_mention : event_mentions) {
+			if(event_mention.getSentenceID()!=null){
+				System.out.println("Searching for: " + event_mention.getSentenceID());
+				for (Sentence sentence : sentences){
+					if(sentence.getFrameID().equals(event_mention.getSentenceID())){
+						System.out.println("Found " + sentence.getFrameID());
+						event_mention.setSentence(sentence);
+						break;
+					}
+				}
+				System.out.println(": " + event_mention.getSentenceID());
+			}
+			if(event_mention.getContextID()!=null){
+				System.out.println("Searching for: " + event_mention.getContextID());
+				for (Context context : contexts){
+					if(context.getFrameID().equals(event_mention.getContextID())){
+						System.out.println("Found " + context.getFrameID());
+						event_mention.setContext(context);
+						break;
+					}
+				}
+				System.out.println(": " + event_mention.getContextID());
+				
+			}
+		}
+		
+		System.out.println("Printing txt to file");
 		try{
 		    PrintWriter writer = new PrintWriter(WRITE_LOCATION + "entity_mentions.txt", "UTF-8");
 		    for(EntityMention entity_mention : entity_mentions) {
@@ -88,10 +308,6 @@ public class ReachXml2POJO {
 			    writer.println("\tReference: " + entity_mention.getEndPos().getReference());
 			    writer.println("\tObject Type: " + entity_mention.getEndPos().getObjectType().toString());
 			    writer.println("Sentence ID: " + entity_mention.getSentenceID());
-			    //writer.println("\tFrame ID: " + entity_mention.getSentence().getFrameID());
-			    //writer.println("\tPassage ID: " + entity_mention.getSentence().getPassageID());
-			    //writer.println("\tText: " + entity_mention.getSentence().getText());
-			    //writer.println("\tFrameType: " + entity_mention.getSentence().getFrameType());
 			    writer.println("Xref: " + entity_mention.getXref());
 			    writer.println("\tID: " + entity_mention.getXref().getID());
 			    writer.println("\tNamespace: " + entity_mention.getXref().getNamespace());
@@ -202,6 +418,7 @@ public class ReachXml2POJO {
 		} catch (IOException e) {
 		   // do something		
 		}
+		*/
 		System.out.println("Done");
 	}
 	
