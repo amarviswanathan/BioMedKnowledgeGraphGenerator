@@ -78,26 +78,36 @@ public class ReachXml2POJO {
 				"@prefix kged: 	<http://localhost/kged/ont#>.\n" + 
 				"@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n";
 		try{
-		    PrintWriter writer = new PrintWriter(WRITE_LOCATION + "entity_mentions.ttl", "UTF-8");
+		    int counter = 0;
+		    int index = 0;
+		    PrintWriter writer = new PrintWriter(WRITE_LOCATION + "entity_mentions-" + index + ".ttl", "UTF-8");
 		    writer.println(prefixes);
 		    for(EntityMention entity_mention : entity_mentions) {
+		    	if(counter == entity_mentions.size()/5){
+		    		index++;
+		    		writer.close();
+		    		counter=0;
+		    		writer = new PrintWriter(WRITE_LOCATION + "entity_mentions-" + index + ".ttl", "UTF-8");
+		    		writer.println(prefixes);
+		    	}
 		    	System.out.println("Entity Mention: " + entity_mention.getFrameID());
 			    writer.println("<kged-kb:" + entity_mention.getFrameID() + "> a <kged:EntityMention> ;");
-			    writer.println("\trdfs:label \"" + entity_mention.getText() + "\" ;");
+			    writer.println("\trdfs:label \"" + entity_mention.getText().replace("\"", "'").replace("\\", "/") + "\" ;");
 			    writer.println("\tkgeds:hasType \"" + entity_mention.getType() + "\" ;");
 			    writer.println("\tkgeds:hasFrameType <kged:Frame-" + entity_mention.getFrameType().toString() + "> ;");
 			    writer.println("\tkgeds:hasObjectType <kged:ObjectType-" + entity_mention.getObjectType().toString() + "> ;");
 			    writer.println("\tkgeds:hasStartPositionReference <kged-kb:" + entity_mention.getStartPos().getReference() + "> ;");
-                writer.println("\tkgeds:hasStartPositionOffset \"" + entity_mention.getStartPos().getOffset() + "\" ;");
+                writer.println("\tkgeds:hasStartPositionOffset \"" + entity_mention.getStartPos().getOffset() + "\"^^xsd:integer ;");
                 writer.println("\tkgeds:hasStartPositionObjectType <kged:ObjectType-" + entity_mention.getStartPos().getObjectType().toString() + "> ;");
 			    writer.println("\tkgeds:hasEndPositionReference <kged-kb:" + entity_mention.getEndPos().getReference() + "> ;");
-                writer.println("\tkgeds:hasEndPositionOffset \"" + entity_mention.getEndPos().getOffset() + "\" ;");
+                writer.println("\tkgeds:hasEndPositionOffset \"" + entity_mention.getEndPos().getOffset() + "\"^^xsd:integer ;");
                 writer.println("\tkgeds:hasEndPositionObjectType <kged:ObjectType-" + entity_mention.getEndPos().getObjectType().toString() + "> ;");
                 writer.println("\tkgeds:fromSentence <kged-kb:" + entity_mention.getSentenceID() + "> ;");
 			    writer.println("\tkgeds:hasXrefID \"" + entity_mention.getXref().getID() + "\" ;");
 			    writer.println("\tkgeds:hasXrefNamespace \"" + entity_mention.getXref().getNamespace() + "\" ;");
 			    writer.println("\tkgeds:hasXrefObjectType <kged:ObjectType-" + entity_mention.getXref().getObjectType().toString() + "> .");
 			    writer.println("");
+			    counter++;
 		    }
 		    writer.close();
 		} catch (IOException e) {
@@ -114,14 +124,14 @@ public class ReachXml2POJO {
 				writer.println("\tkgeds:hasFrameType <kged:Frame-" + event_mention.getFrameType().toString() + "> ;");
 				writer.println("\tkgeds:hasObjectType <kged:ObjectType-" + event_mention.getObjectType().toString() + "> ;");
 			    writer.println("\trdfs:label \"" + event_mention.getText() + "\" ;");
-				//writer.println("\trdfs:comment \"" + event_mention.getVerboseText() + "\" ;");
+				writer.println("\trdfs:comment \"" + event_mention.getVerboseText().replace("\"", "'").replace("\\", "/") + "\" ;");
 				writer.println("\tkgeds:hasType \"" + event_mention.getType() + "\" ;");
 			    writer.println("\tkgeds:hasSubType \"" + event_mention.getSubType() + "\" ;");
 			    writer.println("\tkgeds:hasStartPositionReference <kged-kb:" + event_mention.getStartPos().getReference() + "> ;");
-                writer.println("\tkgeds:hasStartPositionOffset \"" + event_mention.getStartPos().getOffset() + "\" ;");
+                writer.println("\tkgeds:hasStartPositionOffset \"" + event_mention.getStartPos().getOffset() + "\"^^xsd:integer ;");
                 writer.println("\tkgeds:hasStartPositionObjectType <kged:ObjectType-" + event_mention.getStartPos().getObjectType().toString() + "> ;");
 			    writer.println("\tkgeds:hasEndPositionReference <kged-kb:" + event_mention.getEndPos().getReference() + "> ;");
-                writer.println("\tkgeds:hasEndPositionOffset \"" + event_mention.getEndPos().getOffset() + "\" ;");
+                writer.println("\tkgeds:hasEndPositionOffset \"" + event_mention.getEndPos().getOffset() + "\"^^xsd:integer ;");
                 writer.println("\tkgeds:hasEndPositionObjectType <kged:ObjectType-" + event_mention.getEndPos().getObjectType().toString() + "> ;");
                 writer.println("\tkgeds:fromSentence <kged-kb:" + event_mention.getSentenceID() + "> ;");
 			    writer.println("\tkgeds:hasContext <kged-kb:" + event_mention.getContextID() + "> ;");
@@ -177,16 +187,16 @@ public class ReachXml2POJO {
 				writer.println("<kged-kb:" + sentence.getFrameID() + "> a <kged:Sentence> ;");
 				writer.println("\tkgeds:hasFrameType <kged:Frame-" + sentence.getFrameType().toString() + "> ;");
 				writer.println("\tkgeds:fromPassage <kged-kb:" + sentence.getPassageID() + "> ;");
-		    	//writer.println("\tkgeds:hasContent \"" + sentence.getText() + "\" ;");
+		    	writer.println("\tkgeds:hasContent \"" + sentence.getText().replace("\"", "'").replace("\\", "/") + "\" ;");
 		    	if(sentence.getObjectMeta()!=null){
 		    		writer.println("\tkgeds:hasMetaObjectComponent \"" + sentence.getObjectMeta().getComponent() + "\" ;");
 		    		writer.println("\tkgeds:hasMetaObjectType <kged:ObjectType-" + sentence.getObjectMeta().getObjectType().toString() + "> ;");
 		    	}
 		    	writer.println("\tkgeds:hasStartPositionReference <kged-kb:" + sentence.getStartPos().getReference() + "> ;");
-                writer.println("\tkgeds:hasStartPositionOffset \"" + sentence.getStartPos().getOffset() + "\" ;");
+                writer.println("\tkgeds:hasStartPositionOffset \"" + sentence.getStartPos().getOffset() + "\"^^xsd:integer ;");
                 writer.println("\tkgeds:hasStartPositionObjectType <kged:ObjectType-" + sentence.getStartPos().getObjectType().toString() + "> ;");
 			    writer.println("\tkgeds:hasEndPositionReference <kged-kb:" + sentence.getEndPos().getReference() + "> ;");
-                writer.println("\tkgeds:hasEndPositionOffset \"" + sentence.getEndPos().getOffset() + "\" ;");
+                writer.println("\tkgeds:hasEndPositionOffset \"" + sentence.getEndPos().getOffset() + "\"^^xsd:integer ;");
                 writer.println("\tkgeds:hasEndPositionObjectType <kged:ObjectType-" + sentence.getEndPos().getObjectType().toString() + "> ;");
                 writer.println("\tkgeds:hasObjectType <kged:ObjectType-" + sentence.getObjectType().toString() + "> .");
 			    writer.println("");
@@ -203,10 +213,10 @@ public class ReachXml2POJO {
 		    	System.out.println("Passage: " + passage.getFrameID());
 		    	writer.println("<kged-kb:" + passage.getFrameID() + "> a <kged:Passage> ;");
 		    	writer.println("\tkgeds:hasFrameType <kged:Frame-" + passage.getFrameType().toString() + "> ;");
-				writer.println("\tkgeds:hasIndex " + passage.getIndex() + " ;");
+				writer.println("\tkgeds:hasIndex \"" + passage.getIndex() + "\"^^xsd:integer ;");
 		    	writer.println("\tkgeds:hasSectionID \"" + passage.getSectionID()  + "\" ;");
 		    	writer.println("\tkgeds:hasSectionName \"" + passage.getSectionName() + "\" ;");
-		    	//writer.println("\tkgeds:hasContent \"" + passage.getText()+ "\" ;");
+		    	writer.println("\tkgeds:hasContent \"" + passage.getText().replace("\"", "'").replace("\\", "/")+ "\" ;");
 		    	if(passage.getObjectMeta()!=null){
 		    		writer.println("\tkgeds:hasMetaObjectComponent \"" + passage.getObjectMeta().getComponent() + "\" ;");
 		    		writer.println("\tkgeds:hasMetaObjectType <kged:ObjectType-" + passage.getObjectMeta().getObjectType().toString() + "> ;");
