@@ -76,14 +76,15 @@ public class ReachXml2POJO {
 				"@prefix kgeds: 	<http://localhost/kged/schema#>.\n" + 
 				"@prefix kged-kd: 	<http://localhost/kged/kb#>.\n" +
 				"@prefix kged: 	<http://localhost/kged/ont#>.\n" + 
-				"@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n";
+				"@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n"+ 
+				"@prefix GO: <http://purl.obolibrary.org/obo/GO_#> .\n";
 		try{
 		    int counter = 0;
 		    int index = 0;
 		    PrintWriter writer = new PrintWriter(WRITE_LOCATION + "entity_mentions-" + index + ".ttl", "UTF-8");
 		    writer.println(prefixes);
 		    for(EntityMention entity_mention : entity_mentions) {
-		    	if(counter == entity_mentions.size()/5){
+		    	if(counter == entity_mentions.size()/2){
 		    		index++;
 		    		writer.close();
 		    		counter=0;
@@ -91,8 +92,16 @@ public class ReachXml2POJO {
 		    		writer.println(prefixes);
 		    	}
 		    	System.out.println("Entity Mention: " + entity_mention.getFrameID());
-			    writer.println("<kged-kb:" + entity_mention.getFrameID() + "> a <kged:EntityMention> ;");
-			    writer.println("\trdfs:label \"" + entity_mention.getText().replace("\"", "'").replace("\\", "/") + "\" ;");
+		    	if(entity_mention.getXref()!=null) {
+		    		if(entity_mention.getXref().getID().contains(":")){
+		    			writer.println("<kged-kb:" + entity_mention.getFrameID() + "> a <"+ entity_mention.getXref().getID() + "> ;");
+		    		} else {
+		    			writer.println("<kged-kb:" + entity_mention.getFrameID() + "> a <"+ entity_mention.getXref().getNamespace() + ":" + entity_mention.getXref().getID() + "> ;");
+		    		}
+		    	} else {
+		    		writer.println("<kged-kb:" + entity_mention.getFrameID() + "> a <kged:EntityMention> ;");
+		    	}
+		    	writer.println("\trdfs:label \"" + entity_mention.getText().replace("\"", "'").replace("\\", "/") + "\" ;");
 			    writer.println("\tkgeds:hasType \"" + entity_mention.getType() + "\" ;");
 			    writer.println("\tkgeds:hasFrameType <kged:Frame-" + entity_mention.getFrameType().toString() + "> ;");
 			    writer.println("\tkgeds:hasObjectType <kged:ObjectType-" + entity_mention.getObjectType().toString() + "> ;");
