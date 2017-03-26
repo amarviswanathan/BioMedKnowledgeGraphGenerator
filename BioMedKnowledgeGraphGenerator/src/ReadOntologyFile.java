@@ -7,6 +7,7 @@ import java.util.Properties;
 
 import javax.imageio.stream.FileImageInputStream;
 
+import org.apache.jena.ontology.Individual;
 import org.apache.jena.ontology.OntClass;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.ontology.OntModelSpec;
@@ -29,23 +30,28 @@ public class ReadOntologyFile {
 		// TODO Auto-generated method stub
 		
 		Properties prop = new Properties();
-		InputStream input = new FileInputStream("properties/config.properties");
-		
+		InputStream input = new FileInputStream("properties/config.properties");;
 		prop.load(input);
 		
 		OntModel model = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM);
 		InputStream in = new FileInputStream(prop.getProperty("ontologyFileDirectory"));
+		System.out.println("Reading: " + prop.getProperty("ontologyFileDirectory"));
 		model.read(in,null);
-		
-		Iterator<OntClass> it = model.listClasses();
+		Iterator<OntClass> classes = model.listClasses();
 		int i = 0;
-		while(it.hasNext()) {
+		System.out.println("Printing Classes: ");
+		while(classes.hasNext()) {
 			i++;
-			OntClass ontclass = it.next();
+			OntClass ontclass = classes.next();
 			
 			System.out.println(ontclass.toString());
 		}
-
+		System.out.println("Printing Individuals: ");
+		Iterator<Individual> instances = model.listIndividuals();
+		while(instances.hasNext()) {
+			Individual ontindv = instances.next();
+			System.out.println(ontindv.toString());
+		}
+		System.out.println("Done");
 	}
-
 }
