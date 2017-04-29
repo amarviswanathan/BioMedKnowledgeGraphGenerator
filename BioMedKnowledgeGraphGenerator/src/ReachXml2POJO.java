@@ -45,8 +45,8 @@ public class ReachXml2POJO {
 	//TODO move these to a property file
 //	public static final String READ_LOCATION = "/home/amar/Data/xml/";
 //	public static final String WRITE_LOCATION = "/home/amar/Data/rdf/";
-	public static final String READ_LOCATION = "/home/sabbir/Programs/xml/";
-	public static final String WRITE_LOCATION = "/home/sabbir/Programs/rdf/";
+	public static final String READ_LOCATION = "/home/sabbir/Programs/xml/fries-PM1s/";
+	public static final String WRITE_LOCATION = "/home/sabbir/Programs/rdf/fries-PM1s/";
 	
 	
 	static Set<EntityMention> entity_mentions = new HashSet<EntityMention>();
@@ -87,7 +87,7 @@ public class ReachXml2POJO {
 		    PrintWriter writer = new PrintWriter(WRITE_LOCATION + "entity_mentions-" + index + ".ttl", "UTF-8");
 		    writer.println(prefixes);
 		    for(EntityMention entity_mention : entity_mentions) {
-		    	if(counter == entity_mentions.size()/10){
+		    	if(counter == entity_mentions.size()/30){
 		    		index++;
 		    		writer.close();
 		    		counter=0;
@@ -128,17 +128,26 @@ public class ReachXml2POJO {
 		} catch (IOException e) {
 			   // do something
 		}
-		
 		System.out.println("Printing Event Mention TTL to file");
+		
 		try{
-		    PrintWriter writer = new PrintWriter(WRITE_LOCATION + "event_mentions.ttl", "UTF-8");
-		    writer.println(prefixes);
+			int counter = 0;
+			int index = 0;
+			PrintWriter writer = new PrintWriter(WRITE_LOCATION + "event_mentions-" + index + ".ttl", "UTF-8");
+			writer.println(prefixes);
 		    for(EventMention event_mention : event_mentions) {
+		    	if(counter == event_mentions.size()/5){
+		    		index++;
+		    		writer.close();
+		    		counter=0;
+		    		writer = new PrintWriter(WRITE_LOCATION + "event_mentions-" + index + ".ttl", "UTF-8");
+		    		writer.println(prefixes);
+		    	}
 				System.out.println("Event Mention: " + event_mention.getFrameID());
 				writer.println("<" + kgcs + event_mention.getFrameID() + "> a <" + kgcs + "EventMention> ;");
 				writer.println("\t<" + kgcs + "hasFrameType> <kgcs:Frame-" + event_mention.getFrameType().toString() + "> ;");
 				writer.println("\t<" + kgcs + "hasObjectType> <kgcs:" + event_mention.getObjectType().toString().toLowerCase().replaceAll("_","-") + "> ;");
-			    writer.println("\trdfs:label \"" + event_mention.getText() + "\" ;");
+			    writer.println("\trdfs:label \"" + event_mention.getText().replace("\"", "'").replace("\\", "/") + "\" ;");
 				writer.println("\trdfs:comment \"" + event_mention.getVerboseText().replace("\"", "'").replace("\\", "/") + "\" ;");
 				writer.println("\t<" + kgcs + "hasMentionType> \"" + event_mention.getType() + "\" ;");
 			    writer.println("\t<" + kgcs + "hasMentionSubType> \"" + event_mention.getSubType() + "\" ;");
@@ -157,10 +166,11 @@ public class ReachXml2POJO {
 			    writer.println("\t<" + kgcs + "hasArgumentIndex> " + event_mention.getArguments().getIndex() + " ;");
 			    writer.println("\t<" + kgcs + "hasArgumentArgumentType> <kgcs-Argument:" + event_mention.getArguments().getArgumentType() + "> ;");
 			    writer.println("\t<" + kgcs + "hasArgumentType> \"" + event_mention.getArguments().getType() + "\" ;");
-			    writer.println("\t<" + kgcs + "hasArgumentLabel> \"" + event_mention.getArguments().getText() + "\" ;");
+			    writer.println("\t<" + kgcs + "hasArgumentLabel> \"" + event_mention.getArguments().getText().replace("\"", "'").replace("\\", "/") + "\" ;");
 			    writer.println("\t<" + kgcs + "boolIsDirect> \"" + event_mention.getIsDirect() + "\" ;");
 			    writer.println("\t<" + kgcs + "boolIsHypothesis> \"" + event_mention.getIsHypothesis()+ "\" .");
 			    writer.println("");
+			    counter++;
 		    }
 		    writer.close();
 		} catch (IOException e) {
@@ -195,9 +205,18 @@ public class ReachXml2POJO {
 		}
 		
 		try{
-		    PrintWriter writer = new PrintWriter(WRITE_LOCATION + "sentences.ttl", "UTF-8");
+			int counter = 0;
+			int index = 0;
+		    PrintWriter writer = new PrintWriter(WRITE_LOCATION + "sentences-" + index + ".ttl", "UTF-8");
 		    writer.println(prefixes);
 		    for(Sentence sentence : sentences) {
+		    	if(counter == sentences.size()/20){
+		    		index++;
+		    		writer.close();
+		    		counter=0;
+		    		writer = new PrintWriter(WRITE_LOCATION + "sentences-" + index + ".ttl", "UTF-8");
+		    		writer.println(prefixes);
+		    	}
 		    	System.out.println("Sentence: " + sentence.getFrameID());
 				writer.println("<" + kgcs + sentence.getFrameID() + "> a <" + kgcs + "Sentence> ;");
 				writer.println("\t<" + kgcs + "hasFrameType> <kgcs:Frame-" + sentence.getFrameType().toString() + "> ;");
@@ -215,6 +234,7 @@ public class ReachXml2POJO {
                 writer.println("\t<" + kgcs + "hasEndPositionObjectType> <kgcs:" + sentence.getEndPos().getObjectType().toString().toLowerCase().replaceAll("_","-") + "> ;");
                 writer.println("\t<" + kgcs + "hasObjectType> <kgcs:" + sentence.getObjectType().toString().toLowerCase().replaceAll("_","-") + "> .");
 			    writer.println("");
+			    counter++;
 			    }
 		    writer.close();
 		} catch (IOException e) {
@@ -222,9 +242,18 @@ public class ReachXml2POJO {
 		}    
 		
 		try{
-		    PrintWriter writer = new PrintWriter(WRITE_LOCATION + "passages.ttl", "UTF-8");
+			int counter = 0;
+			int index = 0;
+		    PrintWriter writer = new PrintWriter(WRITE_LOCATION + "passages-" + index + ".ttl", "UTF-8");
 		    writer.println(prefixes);
 		    for(Passage passage : passages) {
+		    	if(counter == passages.size()/3){
+		    		index++;
+		    		writer.close();
+		    		counter=0;
+		    		writer = new PrintWriter(WRITE_LOCATION + "passages-" + index + ".ttl", "UTF-8");
+		    		writer.println(prefixes);
+		    	}
 		    	System.out.println("Passage: " + passage.getFrameID());
 		    	writer.println("<" + kgcs + passage.getFrameID() + "> a <" + kgcs + "Passage> ;");
 		    	writer.println("\t<" + kgcs + "hasFrameType> <kgcs:Frame-" + passage.getFrameType().toString() + "> ;");
@@ -239,6 +268,7 @@ public class ReachXml2POJO {
 		    	writer.println("\t<" + kgcs + "hasObjectType> <kgcs:" + passage.getObjectType().toString().toLowerCase().replaceAll("_","-") + "> ;");
 			    writer.println("\t<" + kgcs + "boolIsTitle> \"" + passage.getIsTitle() + "\" .");
 			    writer.println("");
+			    counter++;
 		    }
 		    writer.close();
 		} catch (IOException e) {

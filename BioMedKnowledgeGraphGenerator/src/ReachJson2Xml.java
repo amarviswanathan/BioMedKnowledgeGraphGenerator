@@ -14,8 +14,8 @@ import org.json.XML;
 public class ReachJson2Xml {
 
 	//TODO move these to a property file
-	public static final String WRITE_LOCATION = "/home/amar/Data/xml/";
-	public static final String READ_LOCATION = "/home/amar/Data/fries-PM56789s/";
+	public static final String WRITE_LOCATION = "/home/sabbir/Programs/xml/fries-PM1s/";
+	public static final String READ_LOCATION = "/home/sabbir/Programs/json/fries-PM1s/";
 
 	/**
 	 * @param args
@@ -36,7 +36,7 @@ public class ReachJson2Xml {
 				e.printStackTrace();
 			}
 		});
-
+		System.out.println("Done converting to XML");
 	}
 	/**
 	 * @param jsonFileName "The name of the input json file name. The same name is used for conversion to xml"
