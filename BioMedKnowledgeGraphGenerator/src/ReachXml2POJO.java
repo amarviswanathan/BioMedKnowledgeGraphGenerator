@@ -98,11 +98,13 @@ public class ReachXml2POJO {
 		    	if(entity_mention.getXref()!=null) {
 		    		if(entity_mention.getXref().getID().contains(":")){
 		    			writer.println("<" + kgcs + entity_mention.getType() + "-" + entity_mention.getFrameID() + "> a <"+ entity_mention.getXref().getID() + "> ;");
-		    			writer.println("\towl:sameAs " + "<" + kgcs + entity_mention.getFrameID() + "> .");
+		    			writer.println("\trdfs:label \"" + entity_mention.getText().replace("\"", "'").replace("\\", "/") + "\" ;");
+		    			writer.println("\tprov:wasDerivedFrom " + "<" + kgcs + entity_mention.getFrameID() + "> .");
 		    			writer.println("");
 		    		} else {
 		    			writer.println("<" + kgcs + entity_mention.getType() + "-" + entity_mention.getFrameID() + "> a <"+ entity_mention.getXref().getNamespace() + ":" + entity_mention.getXref().getID() + "> ;");
-		    			writer.println("\towl:sameAs " + "<" + kgcs + entity_mention.getFrameID() + "> .");
+		    			writer.println("\trdfs:label \"" + entity_mention.getText().replace("\"", "'").replace("\\", "/") + "\" ;");
+		    			writer.println("\tprov:wasDerivedFrom " + "<" + kgcs + entity_mention.getFrameID() + "> .");
 		    			writer.println("");
 		    		}
 		    	}
