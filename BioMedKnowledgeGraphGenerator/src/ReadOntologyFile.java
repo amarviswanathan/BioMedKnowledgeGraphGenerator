@@ -29,13 +29,21 @@ public class ReadOntologyFile {
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
 		
-		Properties prop = new Properties();
-		InputStream input = new FileInputStream("properties/config.properties");;
-		prop.load(input);
+		//Properties prop = new Properties();
+		//InputStream input = new FileInputStream("properties/config.properties");
+		//prop.load(input);
+		
+		//InputStream in = new FileInputStream(prop.getProperty("ontologyFileDirectory"));
+		//System.out.println("Reading: " + prop.getProperty("ontologyFileDirectory"));
+		
 		
 		OntModel model = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM);
-		InputStream in = new FileInputStream(prop.getProperty("ontologyFileDirectory"));
-		System.out.println("Reading: " + prop.getProperty("ontologyFileDirectory"));
+		
+		
+		PropertyRead properties = new PropertyRead();
+		InputStream in = new FileInputStream(properties.rdfFileDirectory);
+		System.out.println("Reading: " + properties.rdfFileDirectory);
+		
 		model.read(in,null);
 		Iterator<OntClass> classes = model.listClasses();
 		int i = 0;

@@ -42,11 +42,10 @@ import bean.XRefs;
  */
 public class ReachXml2POJO {
 	
-	//TODO move these to a property file
-//	public static final String READ_LOCATION = "/home/amar/Data/xml/";
-//	public static final String WRITE_LOCATION = "/home/amar/Data/rdf/";
-	public static final String READ_LOCATION = "/home/sabbir/Programs/xml/fries-PM1s/";
-	public static final String WRITE_LOCATION = "/home/sabbir/Programs/rdf/fries-PM1s/";
+	//obtain read and write location from config.properties
+	static PropertyRead mydirs = new PropertyRead();
+	public static final String READ_LOCATION = mydirs.xmlFileDirectory;
+	public static final String WRITE_LOCATION = mydirs.ttlFileDirectory;
 	
 	
 	static Set<EntityMention> entity_mentions = new HashSet<EntityMention>();
@@ -60,9 +59,11 @@ public class ReachXml2POJO {
 	public static void main(String[] args) throws Exception{
 		// TODO Auto-generated method stub
 		//Files.newDirectoryStream(Paths.get(READ_LOCATION),path -> path.toString().contains(".entities"))
-		Files.newDirectoryStream(Paths.get(READ_LOCATION))
+		Files.newDirectoryStream(Paths.get(READ_LOCATION),
+				path -> path.toString().endsWith(".xml"))
 		.forEach(s -> {
 			try {
+				System.out.println("Current File: " + s.toString());
 				readXml(s.toString());
 			} catch (Exception e) {
 				// TODO Auto-generated catch block

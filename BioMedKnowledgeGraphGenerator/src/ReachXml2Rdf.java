@@ -25,8 +25,13 @@ public class ReachXml2Rdf {
 	//TODO move these to a property file
 	//	public static final String READ_LOCATION = "/home/amar/Data/xml/";
 	//	public static final String WRITE_LOCATION = "/home/amar/Data/rdf/";
-	public static final String READ_LOCATION = "/home/sabbir/Programs/xml/";
-	public static final String WRITE_LOCATION = "home/sabbir/Programs/rdf/";
+	//public static final String READ_LOCATION = "/home/sabbir/Programs/xml/";
+	//public static final String WRITE_LOCATION = "home/sabbir/Programs/rdf/";
+	
+	static PropertyRead properties = new PropertyRead();
+	public static final String READ_LOCATION = properties.xmlFileDirectory;
+	public static final String WRITE_LOCATION = properties.rdfFileDirectory;
+	
 	static Set<String> types = new HashSet<String>();
 	/**
 	 * @param args
@@ -38,6 +43,7 @@ public class ReachXml2Rdf {
 				path -> path.toString().contains(".entities"))
 		.forEach(s -> {
 			try {
+				System.out.println(s.toString());
 				readXml(s.toString());
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
