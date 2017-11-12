@@ -9,6 +9,7 @@ public class PropertyRead {
 	String xmlFileDirectory;
 	String rdfFileDirectory;
 	String ttlFileDirectory;
+	String trigFileDirectory;
 	
 	public PropertyRead() {
 		Properties prop = new Properties();
@@ -17,7 +18,7 @@ public class PropertyRead {
 		//Potential TODO - Pre-specify data locations in the project and automatically retrieve the path name
 		
 		try {
-			input = new FileInputStream("BioMedKnowledgeGraphGenerator/properties/config.properties");
+			input = new FileInputStream("/home/sabbir/Programs/BioMedKnowledgeGraphGenerator/BioMedKnowledgeGraphGenerator/properties/config.properties");
 
 			// load a properties file
 			prop.load(input);
@@ -27,6 +28,7 @@ public class PropertyRead {
 			this.xmlFileDirectory = prop.getProperty("xmlFileDirectory");
 			this.rdfFileDirectory = prop.getProperty("rdfFileDirectory");
 			this.ttlFileDirectory = prop.getProperty("ttlFileDirectory");
+			this.trigFileDirectory = prop.getProperty("trigFileDirectory");
 
 		} catch (IOException ex) {
 			ex.printStackTrace();
