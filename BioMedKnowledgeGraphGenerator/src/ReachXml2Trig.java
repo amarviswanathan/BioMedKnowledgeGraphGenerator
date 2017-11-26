@@ -1,11 +1,14 @@
 import java.io.File;
+import java.io.FileReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -58,8 +61,18 @@ public class ReachXml2Trig {
 	/**
 	 * @param args
 	 */
+	
 	public static void main(String[] args) throws Exception{
-		// TODO Auto-generated method stub
+		BufferedReader br = new BufferedReader(new FileReader("MentionTypeMap.csv"));
+	    String line =  null;
+	    HashMap<String,String> mentionTypeMap = new HashMap<String, String>();
+	    line=br.readLine(); // skip first line
+	    while((line=br.readLine())!=null){
+	    	String str[] = line.split(",", -1);
+	    	mentionTypeMap.put(str[0], str[1]);
+	    }
+	    br.close();
+	    // TODO Auto-generated method stub
 		//Files.newDirectoryStream(Paths.get(READ_LOCATION),path -> path.toString().contains(".entities"))
 		Files.newDirectoryStream(Paths.get(READ_LOCATION),
 				path -> path.toString().endsWith(".xml"))
@@ -121,13 +134,17 @@ public class ReachXml2Trig {
 		    	if(entity_mention.getXref()!=null) {
 		    		if(entity_mention.getXref().getID().contains(":")){
 		    			writer.println("\t" + kb + entity_mention.getFrameID() + "\trdf:type\t"+ entity_mention.getXref().getID() + " ;");
-		    			writer.println("\t\trdf:type\t" + entity_mention.getType() + " ;");
-		    			writer.println("\t\trdfs:label\t\"" + entity_mention.getText().replace("\"", "'").replace("\\", "/") + "\" .");
 		    		} else {
 		    			writer.println("\t" + kb + entity_mention.getFrameID() + "\trdf:type\t"+ entity_mention.getXref().getNamespace() + ":" + entity_mention.getXref().getID() + " ;");
-		    			writer.println("\t\trdf:type\t" + entity_mention.getType() + " ;");
-		    			writer.println("\t\trdfs:label\t\"" + entity_mention.getText().replace("\"", "'").replace("\\", "/") + "\" .");
+		    		}	
+		    		if(mentionTypeMap.containsKey(entity_mention.getType())){
+		    			writer.println("\t\trdf:type\t" + mentionTypeMap.get(entity_mention.getType()) + " ;");
 		    		}
+		    		else {
+			    		writer.println("\t\tkges:hasMentionType\t\"" + entity_mention.getType() + "\"^^xsd:string ;");
+		    		}
+		    		//writer.println("\t\trdf:type\t" + entity_mention.getType() + " ;");
+		    		writer.println("\t\trdfs:label\t\"" + entity_mention.getText().replace("\"", "'").replace("\\", "/") + "\" .");
 		    	}
 		    	writer.println("}\n");
 		    	writer.println(kb + "provenance-" + entity_mention.getFrameID() + " {");
@@ -180,9 +197,19 @@ public class ReachXml2Trig {
 		    	writer.println("\t\tnp:hasPublicationInfo\t" + kb + "pubInfo-" + event_mention.getFrameID() + " .");
 		    	writer.println("}\n");
 		    	writer.println(kb + "assertion-" + event_mention.getFrameID() + " {");
-				writer.println("\t" + kb + event_mention.getFrameID() + "\trdf:type\t" + event_mention.getType() + " ;");
-			    writer.println("\t\trdf:type\t" + event_mention.getSubType() + " ;");
-			    writer.println("\t\trdfs:label \"" + event_mention.getText().replace("\"", "'").replace("\\", "/") + "\" ;");
+		    	if(mentionTypeMap.containsKey(event_mention.getType())){
+		    		writer.println("\t" + kb + event_mention.getFrameID() + "\trdf:type\t" + mentionTypeMap.get(event_mention.getType()) + " ;");
+	    		}
+	    		else {
+		    		writer.println("\t" + kb + event_mention.getFrameID() + "\tkges:hasMentionType\t\"" + event_mention.getType() + "\"^^xsd:string ;");
+	    		}
+		    	if(mentionTypeMap.containsKey(event_mention.getSubType())){
+		    		writer.println("\t\trdf:type\t" + mentionTypeMap.get(event_mention.getSubType()) + " ;");
+		    	}
+		    	else {
+		    		writer.println("\t\tkges:hasMentionSubType\t\"" + event_mention.getSubType() + "\"^^xsd:string ;");
+		    	}
+	    		writer.println("\t\trdfs:label \"" + event_mention.getText().replace("\"", "'").replace("\\", "/") + "\" ;");
 				writer.println("\t\trdfs:comment \"" + event_mention.getVerboseText().replace("\"", "'").replace("\\", "/") + "\" .");
 		    	writer.println("}\n");
 		    	writer.println(kb + "provenance-" + event_mention.getFrameID() + " {");
