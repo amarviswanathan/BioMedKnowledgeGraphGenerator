@@ -3,9 +3,9 @@ cellline,sio:010054
 bioprocess,go:0008150
 cellular-component,go:0005575
 family,ncit:C45290
-gene-or-gene-product,chear:UnknownEntity
+gene-or-gene-product,mi:0251
 protein,sio:010043
-simple-chemical,chear:UnknownEntity
+simple-chemical,sio:010004
 site,sio:000019
 species,ncit:C45293
 acetylation,go:0006473
@@ -16,7 +16,7 @@ demethylation,go:0070988
 dephosphorylation,go:0016311
 farnesylation,go:0018343
 glycosylation,go:0070085
-hydrolysis,mop:0000619
+hydrolysis,go:0016787
 hydroxylation,go:0018126
 methylation,go:0032259
 phosphorylation,go:0016310
@@ -36,5 +36,5 @@ positive-regulation,go:2000259
 theme,chear:UnknownEntity
 cell-type,cl:0000000
 organ,uberon:0000062
-tissuetype,chear:UnknownEntity
-complex-assembly,chear:UnknownEntity
+tissuetype,sio:010002
+complex-assembly,go:0006461
