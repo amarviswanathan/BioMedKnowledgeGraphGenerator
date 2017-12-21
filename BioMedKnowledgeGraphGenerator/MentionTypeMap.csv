@@ -1,30 +1,30 @@
 Concept,Class
 cellline,sio:010054
 bioprocess,go:0008150
-cellular-component,"mi:0354, go:0005575"
-family,"sio:001380, ncit:C45290"
+cellular-component,mi:0354; go:0005575
+family,sio:001380; ncit:C45290
 gene-or-gene-product,mi:0251
-protein,"mi:0326, sio:010043"
+protein,mi:0326; sio:010043
 simple-chemical,sio:010004
 site,sio:000019
 species,ncit:C45293
-acetylation,"mi:0192, go:0006473"
+acetylation,mi:0192; go:0006473
 autophosphorylation,go:0046777
-deacetylation,"mi:0197, go:0006476"
-deglycosylation,"mi:0558, go:0006517"
-demethylation,"mi:0871, go:0070988"
-dephosphorylation,"mi:0203, go:0016311"
-farnesylation,"mi:0206, go:0018343"
-glycosylation,"mi:0559, go:0070085"
+deacetylation,mi:0197; go:0006476
+deglycosylation,mi:0558; go:0006517
+demethylation,mi:0871; go:0070988
+dephosphorylation,mi:0203; go:0016311
+farnesylation,mi:0206; go:0018343
+glycosylation,mi:0559; go:0070085
 hydrolysis,go:0016787
-hydroxylation,"mi:0210, go:0018126"
-methylation,"mi:0213, go:0032259"
-phosphorylation,"mi:0217, go:0016310"
-ribosylation,"mi:0557, go:0006471"
-sumoylation,"mi:0566, go:0016925"
-translocation,"mi:0593, go:0051836"
-ubiquitination,"mi:0220, go:0016567"
-activation,"mi:2254, go:0072376"
+hydroxylation,mi:0210; go:0018126
+methylation,mi:0213; go:0032259
+phosphorylation,mi:0217; go:0016310
+ribosylation,mi:0557; go:0006471
+sumoylation,mi:0566; go:0016925
+translocation,mi:0593; go:0051836
+ubiquitination,mi:0220; go:0016567
+activation,mi:2254; go:0072376
 negative-activation,go:0050866
 positive-activation,go:0050867
 controlled,ncit:C61299
@@ -34,7 +34,7 @@ regulation,go:2000257
 negative-regulation,go:2000258
 positive-regulation,go:2000259
 theme,chear:UnknownEntity
-cell-type,"sio:010001, cl:0000000"
-organ,"sio:010003, uberon:0000062"
+cell-type,sio:010001; cl:0000000
+organ,sio:010003; uberon:0000062
 tissuetype,sio:010002
 complex-assembly,go:0006461

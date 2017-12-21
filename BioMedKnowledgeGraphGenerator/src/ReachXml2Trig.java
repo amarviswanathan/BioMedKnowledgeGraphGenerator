@@ -138,7 +138,14 @@ public class ReachXml2Trig {
 		    			writer.println("\t" + kb + entity_mention.getFrameID() + "\trdf:type\t"+ entity_mention.getXref().getNamespace() + ":" + entity_mention.getXref().getID() + " ;");
 		    		}	
 		    		if(mentionTypeMap.containsKey(entity_mention.getType())){
-		    			writer.println("\t\trdf:type\t" + mentionTypeMap.get(entity_mention.getType()) + " ;");
+		    			if(mentionTypeMap.get(entity_mention.getType()).contains(";")){
+		    				String types[] = mentionTypeMap.get(entity_mention.getType()).split(";", -1);
+		    				for(String type : types){
+		    					writer.println("\t\trdf:type\t" + type.replaceAll(" ", "") + " ;");
+		    				}
+		    			} else {
+			    			writer.println("\t\trdf:type\t" + mentionTypeMap.get(entity_mention.getType()) + " ;");
+		    			}
 		    		}
 		    		else {
 			    		writer.println("\t\tkges:hasMentionType\t\"" + entity_mention.getType() + "\"^^xsd:string ;");
@@ -197,11 +204,19 @@ public class ReachXml2Trig {
 		    	writer.println("\t\tnp:hasPublicationInfo\t" + kb + "pubInfo-" + event_mention.getFrameID() + " .");
 		    	writer.println("}\n");
 		    	writer.println(kb + "assertion-" + event_mention.getFrameID() + " {");
+		    	writer.println("\t" + kb + event_mention.getFrameID() );
 		    	if(mentionTypeMap.containsKey(event_mention.getType())){
-		    		writer.println("\t" + kb + event_mention.getFrameID() + "\trdf:type\t" + mentionTypeMap.get(event_mention.getType()) + " ;");
+		    		if(mentionTypeMap.get(event_mention.getType()).contains(";")){
+	    				String types[] = mentionTypeMap.get(event_mention.getType()).split(";", -1);
+	    				for(String type : types){
+	    		    		writer.println("\t\trdf:type\t" + type.replaceAll(" ", "") + " ;");
+	    				}
+	    			} else {
+			    		writer.println("\t\trdf:type\t" + mentionTypeMap.get(event_mention.getType()) + " ;");
+	    			}
 	    		}
 	    		else {
-		    		writer.println("\t" + kb + event_mention.getFrameID() + "\tkges:hasMentionType\t\"" + event_mention.getType() + "\"^^xsd:string ;");
+		    		writer.println("\t\tkges:hasMentionType\t\"" + event_mention.getType() + "\"^^xsd:string ;");
 	    		}
 		    	if(mentionTypeMap.containsKey(event_mention.getSubType())){
 		    		writer.println("\t\trdf:type\t" + mentionTypeMap.get(event_mention.getSubType()) + " ;");
