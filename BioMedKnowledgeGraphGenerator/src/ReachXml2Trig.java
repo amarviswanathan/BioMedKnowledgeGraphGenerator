@@ -47,10 +47,11 @@ import bean.XRefs;
  */
 public class ReachXml2Trig {
 	
-	//obtain read and write location from config.properties
+	//obtain read, write, and mention map location from config.properties
 	static PropertyRead mydirs = new PropertyRead();
 	public static final String READ_LOCATION = mydirs.xmlFileDirectory;
 	public static final String WRITE_LOCATION = mydirs.trigFileDirectory;
+	public static final String MENTIONMAP_LOCATION = mydirs.mentionmapFileLocation;
 	
 	
 	static Set<EntityMention> entity_mentions = new HashSet<EntityMention>();
@@ -63,15 +64,10 @@ public class ReachXml2Trig {
 	 */
 	
 	public static void main(String[] args) throws Exception{
-		BufferedReader br = new BufferedReader(new FileReader("MentionTypeMap.csv"));
-	    String line =  null;
-	    HashMap<String,String> mentionTypeMap = new HashMap<String, String>();
-	    line=br.readLine(); // skip first line
-	    while((line=br.readLine())!=null){
-	    	String str[] = line.split(",", -1);
-	    	mentionTypeMap.put(str[0], str[1]);
-	    }
-	    br.close();
+		
+		// Read the values from Mention Map csv file and save to HashMap
+		HashMap<String,String> mentionTypeMap = extractMentionMap();
+		
 	    // TODO Auto-generated method stub
 		//Files.newDirectoryStream(Paths.get(READ_LOCATION),path -> path.toString().contains(".entities"))
 		Files.newDirectoryStream(Paths.get(READ_LOCATION),
@@ -734,6 +730,19 @@ public class ReachXml2Trig {
 			
 		}
 		
+	}
+	
+	public static HashMap<String,String> extractMentionMap() throws Exception{
+		BufferedReader br = new BufferedReader(new FileReader(MENTIONMAP_LOCATION));
+	    String line =  null;
+	    HashMap<String,String> mentionTypeMapRead = new HashMap<String, String>();
+	    line=br.readLine(); // skip first line
+	    while((line=br.readLine())!=null){
+	    	String str[] = line.split(",", -1);
+	    	mentionTypeMapRead.put(str[0], str[1]);
+	    }
+	    br.close();
+	    return mentionTypeMapRead;
 	}
 
 }

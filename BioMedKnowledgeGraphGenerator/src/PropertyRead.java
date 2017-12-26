@@ -10,6 +10,7 @@ public class PropertyRead {
 	String rdfFileDirectory;
 	String ttlFileDirectory;
 	String trigFileDirectory;
+	String mentionmapFileLocation;
 	
 	public PropertyRead() {
 		Properties prop = new Properties();
@@ -18,17 +19,17 @@ public class PropertyRead {
 		//Potential TODO - Pre-specify data locations in the project and automatically retrieve the path name
 		
 		try {
-			input = new FileInputStream("/home/sabbir/Programs/BioMedKnowledgeGraphGenerator/BioMedKnowledgeGraphGenerator/properties/config.properties");
-
-			// load a properties file
+			//Load the properties file
+			input = new FileInputStream("C:/Users/grossi2/Documents/GitHub/BioMedKnowledgeGraphGenerator/BioMedKnowledgeGraphGenerator/properties/config.properties");
 			prop.load(input);
 
-			// get the property value and store it
+			//Get and store each file directory/location
 			this.jsonFileDirectory = prop.getProperty("jsonFileDirectory");
 			this.xmlFileDirectory = prop.getProperty("xmlFileDirectory");
 			this.rdfFileDirectory = prop.getProperty("rdfFileDirectory");
 			this.ttlFileDirectory = prop.getProperty("ttlFileDirectory");
 			this.trigFileDirectory = prop.getProperty("trigFileDirectory");
+			this.mentionmapFileLocation = prop.getProperty("mentionmapFileLocation");
 
 		} catch (IOException ex) {
 			ex.printStackTrace();
@@ -42,12 +43,4 @@ public class PropertyRead {
 			}
 		}
 	}
-	
-	
-	/*public static void main(String[] args) {
-		PropertyRead mydirs = new PropertyRead();
-		System.out.println(mydirs.inputFileDirectory);
-		System.out.println(mydirs.outFileDirectory);
-		System.out.println(mydirs.ontologyFileDirectory);
-	}*/
 }
