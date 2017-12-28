@@ -28,12 +28,12 @@ activation,mi:2254; go:0072376
 negative-activation,go:0050866
 positive-activation,go:0050867
 controlled,ncit:C61299
-controller,chear:UnknownEntity
+controller,sio:000879
 protein-modification,go:0036211
 regulation,go:2000257
 negative-regulation,go:2000258
 positive-regulation,go:2000259
-theme,chear:UnknownEntity
+theme,sio:000798
 cell-type,sio:010001; cl:0000000
 organ,sio:010003; uberon:0000062
 tissuetype,sio:010002
