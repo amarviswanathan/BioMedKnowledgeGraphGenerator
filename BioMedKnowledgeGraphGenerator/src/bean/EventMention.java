@@ -1,5 +1,7 @@
 package bean;
 
+import java.util.ArrayList;
+
 public class EventMention {
 	Boolean isHypothesis;
 	String sentenceID;//
@@ -17,6 +19,7 @@ public class EventMention {
 	String contextID;
 	Context context;
 	Arguments arguments;
+	ArrayList<Arguments> argumentList;
 	Boolean isDirect;
 	String foundBy;
 	public Boolean getIsHypothesis() {
@@ -127,6 +130,12 @@ public class EventMention {
 	}
 	public void setArguments(Arguments arguments) {
 		this.arguments = arguments;
+	}
+	public ArrayList<Arguments> getArgumentList() {
+		return argumentList;
+	}
+	public void setArgumentList(ArrayList<Arguments> argumentList) {
+		this.argumentList = argumentList;
 	}
 	public Boolean getIsDirect() {
 		return isDirect;

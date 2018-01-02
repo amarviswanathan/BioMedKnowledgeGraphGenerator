@@ -4,6 +4,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -86,7 +87,6 @@ public class ReachXml2Trig {
 		String kgcs="http://tw.rpi.edu/web/Courses/Ontologies/2017/KGCS/KGCS/";
 	    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	    String date;
-
 		String prefixes="@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .\n" +
 				"@prefix sio:     <http://semanticscience.org/resource/> .\n" + 
 				"@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n" +
@@ -196,6 +196,14 @@ public class ReachXml2Trig {
 		    		writer.println(prefixes);
 		    	}
 				System.out.println("Event Mention: " + event_mention.getFrameID());
+				//--------------------------------------------------------------------------------------------------------------
+				//Written by Ian Gross
+				//	Requires remodeling of our output to include multiple arguments
+				//for(int i = 0; i < event_mention.getArgumentList().size(); i++) {
+				//	System.out.println(event_mention.getArgumentList().get(i).getElements());
+				//}
+				//System.out.println(event_mention.getArgumentList().getElements());
+				//--------------------------------------------------------------------------------------------------------------
 		    	writer.println(kb + "head-" + event_mention.getFrameID() + " {");
 		    	writer.println("\t" + kb + "nanoPub-" + event_mention.getFrameID() + "\trdf:type np:Nanopublication ;");
 		    	writer.println("\t\tnp:hasAssertion\t" + kb + "assertion-" + event_mention.getFrameID()+ " ;");
@@ -446,7 +454,8 @@ public class ReachXml2Trig {
 		for(int i = 0; i<frameList.getLength(); i++) {
 			Node frame = frameList.item(i);
 			if (frame.getNodeType() != Node.ELEMENT_NODE) {
-				continue;
+				System.err.println("Error: Search node not of element type");
+		        System.exit(22);
 			}
 			Element fElement = (Element)frame;
 			String frameType = fElement.getElementsByTagName("frame-type").item(0).getTextContent();
@@ -557,7 +566,7 @@ public class ReachXml2Trig {
 				// Set Trigger
 				if(fElement.getElementsByTagName("trigger").item(0)!=null)
 					eventM.setTrigger(fElement.getElementsByTagName("trigger").item(0).getTextContent());
-				// Set Arguments
+				// Set Arguments - Single Argument Approach (old), pending delete after new implementation complete
 				Element aElement = (Element) fElement.getElementsByTagName("arguments").item(0);
 				Arguments arguments = new Arguments();
 				if(aElement.getElementsByTagName("arg").item(0)!=null)
@@ -578,6 +587,38 @@ public class ReachXml2Trig {
 					}
 				}
 				eventM.setArguments(arguments);
+				
+				//Set Arguments - New Approach
+				ArrayList<Arguments> myArgList = new ArrayList<Arguments>();
+				for (int argPos = 0; argPos < fElement.getElementsByTagName("arguments").getLength(); argPos++) {
+					Element argElement = (Element) fElement.getElementsByTagName("arguments").item(argPos);
+					//System.out.println(fElement.getElementsByTagName("arguments").item(0).getTextContent());
+					Arguments argument = new Arguments();
+					//System.out.println(argElement.getTextContent());
+					
+					if(argElement.getElementsByTagName("arg").item(0)!=null)
+						argument.setArg(argElement.getElementsByTagName("arg").item(0).getTextContent());
+					if(argElement.getElementsByTagName("index").item(0)!=null)
+						argument.setIndex(Integer.parseInt(argElement.getElementsByTagName("index").item(0).getTextContent()));
+					if(argElement.getElementsByTagName("text").item(0)!=null)
+						argument.setText(argElement.getElementsByTagName("text").item(0).getTextContent());
+					if(argElement.getElementsByTagName("type").item(0)!=null)
+						argument.setType(argElement.getElementsByTagName("type").item(0).getTextContent());
+					if(argElement.getElementsByTagName("argument-type").item(0)!=null){
+						if (argElement.getElementsByTagName("argument-type").item(0).getTextContent().contentEquals("complex")) {
+							argument.setArgumentType(ArgumentType.COMPLEX);
+						} else if (argElement.getElementsByTagName("argument-type").item(0).getTextContent().contentEquals("entity")) {
+							argument.setArgumentType(ArgumentType.ENTITY);
+						} else if (argElement.getElementsByTagName("argument-type").item(0).getTextContent().contentEquals("event")) {
+							argument.setArgumentType(ArgumentType.EVENT);
+						}
+					}
+					myArgList.add(argument);
+				}
+				eventM.setArgumentList(myArgList);
+				
+				
+				
 				// Set isDirect
 				if(fElement.getElementsByTagName("is-direct").item(0)!=null){
 					if(fElement.getElementsByTagName("is-direct").item(0).getTextContent().contentEquals("true")){
