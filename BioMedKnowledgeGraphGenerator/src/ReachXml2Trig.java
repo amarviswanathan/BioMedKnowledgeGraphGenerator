@@ -213,6 +213,7 @@ public class ReachXml2Trig extends ReachParseXml {
 		    	writer.println("}\n");
 		    	writer.println(kb + "assertion-" + event_mention.getFrameID() + " {");
 		    	writer.println("\t" + kb + event_mention.getFrameID() );
+		    	
 		    	if(mentionTypeMap.containsKey(event_mention.getType())){
 		    		if(mentionTypeMap.get(event_mention.getType()).contains(";")){
 	    				String types[] = mentionTypeMap.get(event_mention.getType()).split(";", -1);
@@ -227,10 +228,15 @@ public class ReachXml2Trig extends ReachParseXml {
 		    		writer.println("\t\tkges:hasMentionType\t\"" + event_mention.getType() + "\"^^xsd:string ;");
 	    		}
 		    	if(mentionTypeMap.containsKey(event_mention.getSubType())){
-		    		writer.println("\t\trdf:type\t" + mentionTypeMap.get(event_mention.getSubType()) + " ;");
-		    	}
-		    	else {
-		    		writer.println("\t\tkges:hasMentionSubType\t\"" + event_mention.getSubType() + "\"^^xsd:string ;");
+		    		if(mentionTypeMap.get(event_mention.getSubType()).contains(";")){
+	    				String types[] = mentionTypeMap.get(event_mention.getSubType()).split(";", -1);
+	    				for(String type : types){
+	    		    		writer.println("\t\trdf:type\t" + type.replaceAll(" ", "") + " ;");
+	    				}
+	    			} else {
+			    		writer.println("\t\trdf:type\t" + mentionTypeMap.get(event_mention.getSubType()) + " ;");
+	    			}
+		    		//writer.println("\t\tkges:hasMentionSubType\t\"" + event_mention.getSubType() + "\"^^xsd:string ;");
 		    	}
 	    		writer.println("\t\trdfs:label \"" + event_mention.getText().replace("\"", "'").replace("\\", "/") + "\" ;");
 				writer.println("\t\trdfs:comment \"" + event_mention.getVerboseText().replace("\"", "'").replace("\\", "/") + "\" .");
@@ -255,7 +261,7 @@ public class ReachXml2Trig extends ReachParseXml {
 			    writer.println("\t\tkgcs:hasArgumentObjectType\tkgcs:" + event_mention.getArguments().getObjectType().toString().toLowerCase().replaceAll("_","-") + " ;");
 			    writer.println("\t\tkgcs:hasArgumentIndex\t" + event_mention.getArguments().getIndex() + " ;");
 			    writer.println("\t\tkgcs:hasArgumentArgumentType\tkgcs:Argument-" + event_mention.getArguments().getArgumentType() + " ;");
-			    writer.println("\t\tkgcs:hasArgumentType\t\"" + event_mention.getArguments().getType() + "\" ;");
+			    writer.println("\t\tkgcs:hasArgumentType\t\"" + event_mention.getArguments().getArgumentType() + "\" ;");
 			    writer.println("\t\tkgcs:hasArgumentLabel\t\"" + event_mention.getArguments().getText().replace("\"", "'").replace("\\", "/") + "\" ;");
 			    if (event_mention.getIsDirect() != null){
 			    	writer.println("\t\tkgcs:boolIsDirect\t\"" + event_mention.getIsDirect() + "\" ;");

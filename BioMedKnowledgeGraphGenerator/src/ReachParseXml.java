@@ -100,24 +100,8 @@ public class ReachParseXml {
 		File xmlFile = new File(fileName);
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = dbFactory.newDocumentBuilder();
-		
 		Document doc = builder.parse(xmlFile);
-		
 		NodeList frameList = doc.getElementsByTagName("frames");
-		
-		//TempdStorage
-		Set<String> temp = new HashSet<String>();
-		//temp.add(Integer.toString(fElement.getElementsByTagName("object-type").getLength()));
-		//System.out.println(temp);
-		/*
-		 * System.out.println("---------------");
-				for (int argPos = 0; argPos < fElement.getElementsByTagName("object-type").getLength(); argPos++) {
-					Element argElement = (Element) fElement.getElementsByTagName("object-type").item(argPos);
-					System.out.println(argElement.getTextContent());
-					//System.out.println("hi");
-				}
-				System.out.println("---------------");
-		 */
 		
 		for(int i = 0; i<frameList.getLength(); i++) {
 			Node frame = frameList.item(i);
@@ -135,25 +119,8 @@ public class ReachParseXml {
 				entityM.setFrameID(fElement.getElementsByTagName("frame-id").item(0).getTextContent());
 				// Set Sentence ID String
 				entityM.setSentenceID(fElement.getElementsByTagName("sentence").item(0).getTextContent());
-				// Set Object Type
-				switch (fElement.getElementsByTagName("object-type").item(1).getTextContent()) {
-				case "frame" : entityM.setObjectType(ObjectType.FRAME);
-				break;
-				case "frame-collection" : entityM.setObjectType(ObjectType.FRAME_COLLECTION);
-				break;
-				case "meta-info" : entityM.setObjectType(ObjectType.META_INFO);
-				break;
-				case "relative-pos" : entityM.setObjectType(ObjectType.RELATIVE_POS);
-				break;
-				case "db-reference" : entityM.setObjectType(ObjectType.DB_REFERENCE);
-				break;
-				case "facet-set" : entityM.setObjectType(ObjectType.FACET_SET);
-				break;
-				case "modification" : entityM.setObjectType(ObjectType.MODIFICATION);
-				break;
-				case "argument" : entityM.setObjectType(ObjectType.ARGUMENT);
-				break;
-				}
+				// Set Object Type (which always a frame, in this case)
+				entityM.setObjectType(ObjectType.FRAME);
 				// Set Start Position
 				Element spElement = (Element) fElement.getElementsByTagName("start-pos").item(0);
 				Position sp = new Position();
@@ -189,25 +156,8 @@ public class ReachParseXml {
 				eventM.setFrameID(fElement.getElementsByTagName("frame-id").item(0).getTextContent());
 				// Set Sentence ID String
 				eventM.setSentenceID(fElement.getElementsByTagName("sentence").item(0).getTextContent());
-				// Set Object Type
-				switch (fElement.getElementsByTagName("object-type").item(0).getTextContent()) {
-				case "frame" : eventM.setObjectType(ObjectType.FRAME);
-				break;
-				case "frame-collection" : eventM.setObjectType(ObjectType.FRAME_COLLECTION);
-				break;
-				case "meta-info" : eventM.setObjectType(ObjectType.META_INFO);
-				break;
-				case "relative-pos" : eventM.setObjectType(ObjectType.RELATIVE_POS);
-				break;
-				case "db-reference" : eventM.setObjectType(ObjectType.DB_REFERENCE);
-				break;
-				case "facet-set" : eventM.setObjectType(ObjectType.FACET_SET);
-				break;
-				case "modification" : eventM.setObjectType(ObjectType.MODIFICATION);
-				break;
-				case "argument" : eventM.setObjectType(ObjectType.ARGUMENT);
-				break;
-				}
+				// Set Object Type (which always a frame, in this case)
+				eventM.setObjectType(ObjectType.FRAME);
 				// Set Start Position
 				Element spElement = (Element) fElement.getElementsByTagName("start-pos").item(0);
 				Position sp = new Position();
@@ -255,8 +205,8 @@ public class ReachParseXml {
 					arguments.setIndex(Integer.parseInt(aElement.getElementsByTagName("index").item(0).getTextContent()));
 				if(aElement.getElementsByTagName("text").item(0)!=null)
 					arguments.setText(aElement.getElementsByTagName("text").item(0).getTextContent());
-				if(aElement.getElementsByTagName("type").item(0)!=null)
-					arguments.setType(aElement.getElementsByTagName("type").item(0).getTextContent());
+				if(aElement.getElementsByTagName("object-type").item(0)!=null)
+					arguments.setType(aElement.getElementsByTagName("object-type").item(0).getTextContent());
 				if(aElement.getElementsByTagName("argument-type").item(0)!=null){
 					if (aElement.getElementsByTagName("argument-type").item(0).getTextContent().contentEquals("complex")) {
 						arguments.setArgumentType(ArgumentType.COMPLEX);
@@ -275,15 +225,18 @@ public class ReachParseXml {
 					//System.out.println(fElement.getElementsByTagName("arguments").item(0).getTextContent());
 					Arguments argument = new Arguments();
 					//System.out.println(argElement.getTextContent());
+					/*
+					System.out.println("----------------");
+					System.out.println(argElement.getElementsByTagName("text").item(0).getTextContent());
+					System.out.println(argElement.getElementsByTagName("argument-type").item(0).getTextContent());
+					System.out.println(argElement.getElementsByTagName("index").item(0).getTextContent());
+					System.out.println(argElement.getElementsByTagName("argument-label").item(0).getTextContent());
+					System.out.println(argElement.getElementsByTagName("arg").item(0).getTextContent());
+					System.out.println("----------------");
+					*/
 					
-					if(argElement.getElementsByTagName("arg").item(0)!=null)
-						argument.setArg(argElement.getElementsByTagName("arg").item(0).getTextContent());
-					if(argElement.getElementsByTagName("index").item(0)!=null)
-						argument.setIndex(Integer.parseInt(argElement.getElementsByTagName("index").item(0).getTextContent()));
 					if(argElement.getElementsByTagName("text").item(0)!=null)
 						argument.setText(argElement.getElementsByTagName("text").item(0).getTextContent());
-					if(argElement.getElementsByTagName("type").item(0)!=null)
-						argument.setType(argElement.getElementsByTagName("type").item(0).getTextContent());
 					if(argElement.getElementsByTagName("argument-type").item(0)!=null){
 						if (argElement.getElementsByTagName("argument-type").item(0).getTextContent().contentEquals("complex")) {
 							argument.setArgumentType(ArgumentType.COMPLEX);
@@ -293,6 +246,13 @@ public class ReachParseXml {
 							argument.setArgumentType(ArgumentType.EVENT);
 						}
 					}
+					if(argElement.getElementsByTagName("index").item(0)!=null)
+						argument.setIndex(Integer.parseInt(argElement.getElementsByTagName("index").item(0).getTextContent()));
+					if(argElement.getElementsByTagName("argument-label").item(0)!=null)
+						argument.setType(argElement.getElementsByTagName("argument-label").item(0).getTextContent());
+					if(argElement.getElementsByTagName("arg").item(0)!=null)
+						argument.setArg(argElement.getElementsByTagName("arg").item(0).getTextContent());
+					
 					myArgList.add(argument);
 				}
 				eventM.setArgumentList(myArgList);
@@ -369,7 +329,7 @@ public class ReachParseXml {
 				// Set Passage ID String
 				sentence.setPassageID(fElement.getElementsByTagName("passage").item(0).getTextContent());
 				// Set Object Type
-				switch (fElement.getElementsByTagName("object-type").item(0).getTextContent()) {
+				switch (fElement.getElementsByTagName("object-type").item(1).getTextContent()) {
 				case "frame" : sentence.setObjectType(ObjectType.FRAME);
 				break;
 				case "frame-collection" : sentence.setObjectType(ObjectType.FRAME_COLLECTION);
