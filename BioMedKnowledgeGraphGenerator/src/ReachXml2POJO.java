@@ -109,6 +109,10 @@ public class ReachXml2POJO extends ReachParseXml {
 		    	writer.println("\trdfs:label \"" + entity_mention.getText().replace("\"", "'").replace("\\", "/") + "\" ;");
 			    writer.println("\t<" + kgcs + "hasMentionType> \"" + entity_mention.getType() + "\" ;");
 			    writer.println("\t<" + kgcs + "hasFrameType> <kgcs:Frame-" + entity_mention.getFrameType().toString() + "> ;");
+			    if(entity_mention.getObjectMeta()!=null){
+		    		writer.println("\t\tkgcs:hasMetaObjectComponent\t\"" + entity_mention.getObjectMeta().getComponent() + "\" ;");
+		    		writer.println("\t\tkgcs:hasMetaObjectType\tkgcs:" + entity_mention.getObjectMeta().getObjectType().toString().toLowerCase().replaceAll("_","-") + " ;");
+		    	}
 			    writer.println("\t<" + kgcs + "hasObjectType> <kgcs:" + entity_mention.getObjectType().toString().toLowerCase().replaceAll("_","-") + "> ;");
 			    writer.println("\t<" + kgcs + "hasStartPositionReference> <" + kgcs + entity_mention.getStartPos().getReference() + "> ;");
                 writer.println("\t<" + kgcs + "hasStartPositionOffset> \"" + entity_mention.getStartPos().getOffset() + "\"^^xsd:integer ;");
@@ -145,6 +149,10 @@ public class ReachXml2POJO extends ReachParseXml {
 				System.out.println("Event Mention: " + event_mention.getFrameID());
 				writer.println("<" + kgcs + event_mention.getFrameID() + "> a <" + kgcs + "EventMention> ;");
 				writer.println("\t<" + kgcs + "hasFrameType> <kgcs:Frame-" + event_mention.getFrameType().toString() + "> ;");
+				if(event_mention.getObjectMeta()!=null){
+		    		writer.println("\t\tkgcs:hasMetaObjectComponent\t\"" + event_mention.getObjectMeta().getComponent() + "\" ;");
+		    		writer.println("\t\tkgcs:hasMetaObjectType\tkgcs:" + event_mention.getObjectMeta().getObjectType().toString().toLowerCase().replaceAll("_","-") + " ;");
+		    	}
 				writer.println("\t<" + kgcs + "hasObjectType> <kgcs:" + event_mention.getObjectType().toString().toLowerCase().replaceAll("_","-") + "> ;");
 			    writer.println("\trdfs:label \"" + event_mention.getText().replace("\"", "'").replace("\\", "/") + "\" ;");
 				writer.println("\trdfs:comment \"" + event_mention.getVerboseText().replace("\"", "'").replace("\\", "/") + "\" ;");

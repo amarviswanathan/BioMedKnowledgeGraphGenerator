@@ -77,7 +77,9 @@ public class ReachXml2Trig extends ReachParseXml {
 		sentences = reachxmlcontent.sentences;
 		passages = reachxmlcontent.passages;
 		
-		System.out.println("Printing Entity Mention TTL to file");
+		//System.exit(0);
+		
+		System.out.println("Printing Entity Mention TRIG to file");
 		String kb="kgcs-kb:";
 		String kgcs="http://tw.rpi.edu/web/Courses/Ontologies/2017/KGCS/KGCS/";
 	    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -154,6 +156,10 @@ public class ReachXml2Trig extends ReachParseXml {
 		    	writer.println("\t\tprov:generatedAtTime\t\"" + date + "Z\"^^xsd:dateTime .\n");
 		    	writer.println("\t" + kb + entity_mention.getFrameID());
 		    	writer.println("\t\tkgcs:hasFrameType\tkgcs:Frame-" + entity_mention.getFrameType().toString() + " ;");
+		    	if(entity_mention.getObjectMeta()!=null){
+		    		writer.println("\t\tkgcs:hasMetaObjectComponent\t\"" + entity_mention.getObjectMeta().getComponent() + "\" ;");
+		    		writer.println("\t\tkgcs:hasMetaObjectType\tkgcs:" + entity_mention.getObjectMeta().getObjectType().toString().toLowerCase().replaceAll("_","-") + " ;");
+		    	}
 			    writer.println("\t\tkgcs:hasObjectType\tkgcs:" + entity_mention.getObjectType().toString().toLowerCase().replaceAll("_","-") + " ;");
 			    writer.println("\t\tkgcs:fromSentence\t" + kb + entity_mention.getSentenceID() + " .");
 			    writer.println("}\n");
@@ -175,7 +181,7 @@ public class ReachXml2Trig extends ReachParseXml {
 		} catch (IOException e) {
 			   // do something
 		}
-		System.out.println("Printing Event Mention TTL to file");
+		System.out.println("Printing Event Mention TRIG to file");
 		
 		try{
 			int counter = 0;
@@ -235,6 +241,10 @@ public class ReachXml2Trig extends ReachParseXml {
 		    	writer.println("\t\tprov:generatedAtTime\t\"" + date + "Z\"^^xsd:dateTime .\n");
 		    	writer.println("\t" + kb + event_mention.getFrameID());
 				writer.println("\t\tkgcs:hasFrameType\tkgcs:Frame-" + event_mention.getFrameType().toString() + " ;");
+				if(event_mention.getObjectMeta()!=null){
+		    		writer.println("\t\tkgcs:hasMetaObjectComponent\t\"" + event_mention.getObjectMeta().getComponent() + "\" ;");
+		    		writer.println("\t\tkgcs:hasMetaObjectType\tkgcs:" + event_mention.getObjectMeta().getObjectType().toString().toLowerCase().replaceAll("_","-") + " ;");
+		    	}
 				writer.println("\t\tkgcs:hasObjectType\tkgcs:" + event_mention.getObjectType().toString().toLowerCase().replaceAll("_","-") + " ;");
                 if (event_mention.getContextID() != null){
                 	writer.println("\t\tkgcs:hasContext\t" + kb + event_mention.getContextID() + " ;");
@@ -323,14 +333,14 @@ public class ReachXml2Trig extends ReachParseXml {
 		try{
 			int counter = 0;
 			int index = 0;
-		    PrintWriter writer = new PrintWriter(WRITE_LOCATION + "sentences-" + index + ".ttl", "UTF-8");
+		    PrintWriter writer = new PrintWriter(WRITE_LOCATION + "sentences-" + index + ".trig", "UTF-8");
 		    writer.println(prefixes);
 		    for(Sentence sentence : sentences) {
 		    	if(counter == sentences.size()/20){
 		    		index++;
 		    		writer.close();
 		    		counter=0;
-		    		writer = new PrintWriter(WRITE_LOCATION + "sentences-" + index + ".ttl", "UTF-8");
+		    		writer = new PrintWriter(WRITE_LOCATION + "sentences-" + index + ".trig", "UTF-8");
 		    		writer.println(prefixes);
 		    	}
 		    	System.out.println("Sentence: " + sentence.getFrameID());

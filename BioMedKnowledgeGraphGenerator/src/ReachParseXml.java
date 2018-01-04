@@ -105,6 +105,20 @@ public class ReachParseXml {
 		
 		NodeList frameList = doc.getElementsByTagName("frames");
 		
+		//TempdStorage
+		Set<String> temp = new HashSet<String>();
+		//temp.add(Integer.toString(fElement.getElementsByTagName("object-type").getLength()));
+		//System.out.println(temp);
+		/*
+		 * System.out.println("---------------");
+				for (int argPos = 0; argPos < fElement.getElementsByTagName("object-type").getLength(); argPos++) {
+					Element argElement = (Element) fElement.getElementsByTagName("object-type").item(argPos);
+					System.out.println(argElement.getTextContent());
+					//System.out.println("hi");
+				}
+				System.out.println("---------------");
+		 */
+		
 		for(int i = 0; i<frameList.getLength(); i++) {
 			Node frame = frameList.item(i);
 			if (frame.getNodeType() != Node.ELEMENT_NODE) {
@@ -112,6 +126,7 @@ public class ReachParseXml {
 		        System.exit(22);
 			}
 			Element fElement = (Element)frame;
+			//Get Object Frame
 			String frameType = fElement.getElementsByTagName("frame-type").item(0).getTextContent();
 			if(frameType.contentEquals("entity-mention")){
 				System.out.println("Found Entity Mention");
@@ -121,7 +136,7 @@ public class ReachParseXml {
 				// Set Sentence ID String
 				entityM.setSentenceID(fElement.getElementsByTagName("sentence").item(0).getTextContent());
 				// Set Object Type
-				switch (fElement.getElementsByTagName("object-type").item(0).getTextContent()) {
+				switch (fElement.getElementsByTagName("object-type").item(1).getTextContent()) {
 				case "frame" : entityM.setObjectType(ObjectType.FRAME);
 				break;
 				case "frame-collection" : entityM.setObjectType(ObjectType.FRAME_COLLECTION);
@@ -157,6 +172,11 @@ public class ReachParseXml {
 				xrefs.setID(xElement.getElementsByTagName("id").item(0).getTextContent());
 				xrefs.setNamespace(xElement.getElementsByTagName("namespace").item(0).getTextContent());
 				entityM.setXref(xrefs);
+				//Get and Set Object Meta Info
+				Element omElement = (Element) fElement.getElementsByTagName("object-meta").item(0);
+				ObjectMeta objmeta = new ObjectMeta();
+				objmeta.setComponent(omElement.getElementsByTagName("component").item(0).getTextContent());
+				entityM.setObjectMeta(objmeta);
 				// Set Text
 				entityM.setText(fElement.getElementsByTagName("text").item(0).getTextContent());
 				// Set Type
@@ -208,6 +228,12 @@ public class ReachParseXml {
 				if(xElement.getElementsByTagName("namespace").item(0)!=null)
 					xrefs.setNamespace(xElement.getElementsByTagName("namespace").item(0).getTextContent());
 				eventM.setXref(xrefs);*/
+				
+				//Get and Set Object Meta Info
+				Element omElement = (Element) fElement.getElementsByTagName("object-meta").item(0);
+				ObjectMeta objmeta = new ObjectMeta();
+				objmeta.setComponent(omElement.getElementsByTagName("component").item(0).getTextContent());
+				eventM.setObjectMeta(objmeta);
 				// Set Text
 				eventM.setText(fElement.getElementsByTagName("text").item(0).getTextContent());
 				// Set Verbose Text
@@ -373,11 +399,11 @@ public class ReachParseXml {
 				ep.setReference(epElement.getElementsByTagName("reference").item(0).getTextContent());
 				ep.setOffset(Integer.parseInt(epElement.getElementsByTagName("offset").item(0).getTextContent()));
 				sentence.setEndPos(ep);
-				// Set Object Meta
+				//Get and Set Object Meta Info
 				Element omElement = (Element) fElement.getElementsByTagName("object-meta").item(0);
-				ObjectMeta om = new ObjectMeta();
-				om.setComponent(omElement.getElementsByTagName("component").item(0).getTextContent());
-				sentence.setObjectMeta(om);
+				ObjectMeta objmeta = new ObjectMeta();
+				objmeta.setComponent(omElement.getElementsByTagName("component").item(0).getTextContent());
+				sentence.setObjectMeta(objmeta);
 				// Set Text
 				sentence.setText(fElement.getElementsByTagName("text").item(0).getTextContent());
 				sentences.add(sentence);
@@ -415,11 +441,11 @@ public class ReachParseXml {
 					case "argument" : passage.setObjectType(ObjectType.ARGUMENT);
 					break;
 				}
-				// Set Object Meta
+				//Get and Set Object Meta Info
 				Element omElement = (Element) fElement.getElementsByTagName("object-meta").item(0);
-				ObjectMeta om = new ObjectMeta();
-				om.setComponent(omElement.getElementsByTagName("component").item(0).getTextContent());
-				passage.setObjectMeta(om);
+				ObjectMeta objmeta = new ObjectMeta();
+				objmeta.setComponent(omElement.getElementsByTagName("component").item(0).getTextContent());
+				passage.setObjectMeta(objmeta);
 				// Set Text
 				passage.setText(fElement.getElementsByTagName("text").item(0).getTextContent());
 				passages.add(passage);
