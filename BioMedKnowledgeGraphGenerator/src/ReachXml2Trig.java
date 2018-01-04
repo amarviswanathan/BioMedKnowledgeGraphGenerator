@@ -46,7 +46,7 @@ import bean.XRefs;
  * @author Sabbir Rashid
  *
  */
-public class ReachXml2Trig {
+public class ReachXml2Trig extends ReachParseXml {
 	
 	//obtain read, write, and mention map location from config.properties
 	static PropertyRead mydirs = new PropertyRead();
@@ -70,18 +70,13 @@ public class ReachXml2Trig {
 		HashMap<String,String> mentionTypeMap = extractMentionMap();
 		
 	    // TODO Auto-generated method stub
-		//Files.newDirectoryStream(Paths.get(READ_LOCATION),path -> path.toString().contains(".entities"))
-		Files.newDirectoryStream(Paths.get(READ_LOCATION),
-				path -> path.toString().endsWith(".xml"))
-		.forEach(s -> {
-			try {
-				System.out.println("Current File: " + s.toString());
-				readXml(s.toString());
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		});
+		ReachXmlContentClass reachxmlcontent = ReachParseXml.parseReachXml(READ_LOCATION);
+		entity_mentions = reachxmlcontent.entity_mentions;
+		event_mentions = reachxmlcontent.event_mentions;
+		contexts = reachxmlcontent.contexts;
+		sentences = reachxmlcontent.sentences;
+		passages = reachxmlcontent.passages;
+		
 		System.out.println("Printing Entity Mention TTL to file");
 		String kb="kgcs-kb:";
 		String kgcs="http://tw.rpi.edu/web/Courses/Ontologies/2017/KGCS/KGCS/";
@@ -441,6 +436,7 @@ public class ReachXml2Trig {
 		System.out.println("Done");
 	}
 	
+	/*
 	public static void readXml(String fileName) throws Exception {
 		
 		File xmlFile = new File(fileName);
@@ -548,12 +544,12 @@ public class ReachXml2Trig {
 				eventM.setEndPos(ep);
 				// Set Xref
 				Element xElement = (Element) fElement.getElementsByTagName("xrefs").item(0);
-				/*XRefs xrefs = new XRefs();
-				if(xElement.getElementsByTagName("id").item(0)!=null)
-					xrefs.setID(xElement.getElementsByTagName("id").item(0).getTextContent());
-				if(xElement.getElementsByTagName("namespace").item(0)!=null)
-					xrefs.setNamespace(xElement.getElementsByTagName("namespace").item(0).getTextContent());
-				eventM.setXref(xrefs);*/
+				//XRefs xrefs = new XRefs();
+				//if(xElement.getElementsByTagName("id").item(0)!=null)
+				//	xrefs.setID(xElement.getElementsByTagName("id").item(0).getTextContent());
+				//if(xElement.getElementsByTagName("namespace").item(0)!=null)
+				//	xrefs.setNamespace(xElement.getElementsByTagName("namespace").item(0).getTextContent());
+				//eventM.setXref(xrefs);
 				// Set Text
 				eventM.setText(fElement.getElementsByTagName("text").item(0).getTextContent());
 				// Set Verbose Text
@@ -773,7 +769,7 @@ public class ReachXml2Trig {
 				System.out.println("Found Unknown Frame Type");
 			}
 		}
-	}
+	}*/
 	
 	public static HashMap<String,String> extractMentionMap() throws Exception{
 		BufferedReader br = new BufferedReader(new FileReader(MENTIONMAP_LOCATION));
