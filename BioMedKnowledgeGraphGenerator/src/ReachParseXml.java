@@ -140,10 +140,12 @@ public class ReachParseXml {
 				xrefs.setNamespace(xElement.getElementsByTagName("namespace").item(0).getTextContent());
 				entityM.setXref(xrefs);
 				//Get and Set Object Meta Info
-				Element omElement = (Element) fElement.getElementsByTagName("object-meta").item(0);
-				ObjectMeta objmeta = new ObjectMeta();
-				objmeta.setComponent(omElement.getElementsByTagName("component").item(0).getTextContent());
-				entityM.setObjectMeta(objmeta);
+				if(fElement.getElementsByTagName("object-meta").item(0)!=null){
+					Element omElement = (Element) fElement.getElementsByTagName("object-meta").item(0);
+					ObjectMeta objmeta = new ObjectMeta();
+					objmeta.setComponent(omElement.getElementsByTagName("component").item(0).getTextContent());
+					entityM.setObjectMeta(objmeta);
+				}
 				// Set Text
 				entityM.setText(fElement.getElementsByTagName("text").item(0).getTextContent());
 				// Set Type
@@ -180,10 +182,12 @@ public class ReachParseXml {
 				eventM.setXref(xrefs);*/
 				
 				//Get and Set Object Meta Info
+				if(fElement.getElementsByTagName("object-meta").item(0)!=null){
 				Element omElement = (Element) fElement.getElementsByTagName("object-meta").item(0);
-				ObjectMeta objmeta = new ObjectMeta();
-				objmeta.setComponent(omElement.getElementsByTagName("component").item(0).getTextContent());
-				eventM.setObjectMeta(objmeta);
+					ObjectMeta objmeta = new ObjectMeta();
+					objmeta.setComponent(omElement.getElementsByTagName("component").item(0).getTextContent());
+					eventM.setObjectMeta(objmeta);
+				}
 				// Set Text
 				eventM.setText(fElement.getElementsByTagName("text").item(0).getTextContent());
 				// Set Verbose Text
