@@ -1,6 +1,6 @@
 Concept,Class
 cellline,sio:010054
-bioprocess,go:0008150
+bioprocess,mi:0359;go:0008150
 cellular-component,mi:0354; go:0005575
 family,sio:001380; ncit:C45290
 gene-or-gene-product,mi:0251
