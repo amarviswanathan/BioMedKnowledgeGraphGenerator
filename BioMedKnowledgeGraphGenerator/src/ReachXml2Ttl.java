@@ -40,7 +40,7 @@ import bean.XRefs;
  * @author Sabbir Rashid
  *
  */
-public class ReachXml2POJO extends ReachParseXml {
+public class ReachXml2Ttl extends ReachParseXml {
 	
 	//obtain read and write location from config.properties
 	static PropertyRead mydirs = new PropertyRead();
