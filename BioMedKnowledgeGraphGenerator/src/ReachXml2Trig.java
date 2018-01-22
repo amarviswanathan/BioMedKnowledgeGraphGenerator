@@ -239,7 +239,24 @@ public class ReachXml2Trig extends ReachParseXml {
 		    		//writer.println("\t\tkges:hasMentionSubType\t\"" + event_mention.getSubType() + "\"^^xsd:string ;");
 		    	}
 	    		writer.println("\t\trdfs:label \"" + event_mention.getText().replace("\"", "'").replace("\\", "/") + "\" ;");
-				writer.println("\t\trdfs:comment \"" + event_mention.getVerboseText().replace("\"", "'").replace("\\", "/") + "\" .");
+				writer.println("\t\trdfs:comment \"" + event_mention.getVerboseText().replace("\"", "'").replace("\\", "/") + "\" ;");
+				writer.println("\t\tkgcs:hasTrigger\t\"" + event_mention.getTrigger() + "\" ;");
+				writer.println("\t\tkgcs:hasArgument\t");
+				for(int i = 0; i < event_mention.getArgumentList().size(); i++) {
+					writer.println("\t\t\t [ kgcs:hasArgumentID\t" + kb + event_mention.getArgumentList().get(i).getArg()+ " ;");
+					writer.println("\t\t\t\tkgcs:hasArgumentType\t" + kb + event_mention.getArgumentList().get(i).getArgumentType() + " ;");
+					writer.println("\t\t\t\tkgcs:hasObjectType\tkgcs:" + event_mention.getArgumentList().get(i).getObjectType() + " ;");
+				    writer.println("\t\t\t\tkgcs:hasIndex\t" + event_mention.getArgumentList().get(i).getIndex() + " ;");
+				    if (i == event_mention.getArgumentList().size() - 1 ){
+				    	writer.println("\t\t\t\trdfs:label\t\"" + event_mention.getArgumentList().get(i).getText() + "\" ] . ");
+				    } else {
+				    	writer.println("\t\t\t\trdfs:label\t\"" + event_mention.getArgumentList().get(i).getText() + "\" ] , ");
+				    }
+//				    writer.println("\t\tkgcs:hasArgumentArgumentType\tkgcs:Argument-" + event_mention.getArguments().getArgumentType() + " ;");
+//				    writer.println("\t\tkgcs:hasArgumentType\t\"" + event_mention.getArguments().getArgumentType() + "\" ;");
+//				    writer.println("\t\tkgcs:hasArgumentLabel\t\"" + event_mention.getArguments().getText().replace("\"", "'").replace("\\", "/") + "\" ;");
+					//	System.out.println(event_mention.getArgumentList().get(i).getElements());
+				}
 		    	writer.println("}\n");
 		    	writer.println(kb + "provenance-" + event_mention.getFrameID() + " {");
 		    	date = sdf.format(new Date());
@@ -256,14 +273,14 @@ public class ReachXml2Trig extends ReachParseXml {
                 	writer.println("\t\tkgcs:hasContext\t" + kb + event_mention.getContextID() + " ;");
                 }
                 writer.println("\t\tkgcs:foundBy\t\"" + event_mention.getFoundBy() + "\" ;");
-			    writer.println("\t\tkgcs:hasTrigger\t\"" + event_mention.getTrigger() + "\" ;");
+/*			    writer.println("\t\tkgcs:hasTrigger\t\"" + event_mention.getTrigger() + "\" ;");
 			    writer.println("\t\tkgcs:hasArgument\t" + kb + event_mention.getArguments().getArg() + " ;");
 			    writer.println("\t\tkgcs:hasArgumentObjectType\tkgcs:" + event_mention.getArguments().getObjectType().toString().toLowerCase().replaceAll("_","-") + " ;");
 			    writer.println("\t\tkgcs:hasArgumentIndex\t" + event_mention.getArguments().getIndex() + " ;");
 			    writer.println("\t\tkgcs:hasArgumentArgumentType\tkgcs:Argument-" + event_mention.getArguments().getArgumentType() + " ;");
 			    writer.println("\t\tkgcs:hasArgumentType\t\"" + event_mention.getArguments().getArgumentType() + "\" ;");
 			    writer.println("\t\tkgcs:hasArgumentLabel\t\"" + event_mention.getArguments().getText().replace("\"", "'").replace("\\", "/") + "\" ;");
-			    if (event_mention.getIsDirect() != null){
+*/			    if (event_mention.getIsDirect() != null){
 			    	writer.println("\t\tkgcs:boolIsDirect\t\"" + event_mention.getIsDirect() + "\" ;");
 			    }
 			    if (event_mention.getIsHypothesis() != null){
