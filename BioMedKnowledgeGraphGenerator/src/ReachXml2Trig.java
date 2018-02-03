@@ -90,7 +90,7 @@ public class ReachXml2Trig extends ReachParseXml {
 				"@prefix kgcs: 	<" + kgcs + ">.\n" + 
 				"@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n"+ 
 				"@prefix owl: <http://www.w3.org/2002/07/owl#> .\n" +
-				"@prefix GO: <http://purl.obolibrary.org/obo/GO_#> .\n" +
+				"@prefix GO: <http://purl.obolibrary.org/obo/GO_> .\n" +
 				"@prefix np: <http://www.nanopub.org/nschema#> .\n" +
 				"@prefix pubchem: <http://rdf.ncbi.nlm.nih.gov/pubchem/compound/> .\n" + 
 				"@prefix hmdb: <http://identifiers.org/hmdb/> .\n" + 
@@ -98,13 +98,14 @@ public class ReachXml2Trig extends ReachParseXml {
 				"@prefix pfam: <http://identifiers.org/pfam/> . \n" +
 				"@prefix interpro: <http://identifiers.org/interpro/> .\n" +
 				"@prefix cellosaurus: <https://web.expasy.org/cellosaurus/> . \n"  +
-				"@prefix cl: <http://purl.obolibrary.org/obo/CL_#> . \n" +
+				"@prefix cl: <http://purl.obolibrary.org/obo/CL_> . \n" +
 				"@prefix tissuelist: <http://identifiers.org/tissuelist/> . \n" + 
 				"@prefix taxonomy: <http://purl.obolibrary.org/obo/NCBITaxon/> .\n" + 
-				"@prefix uniprot: <http://www.unitprot.org/uniprot/> .\n" +
-				"@prefix mi: <http://purl.obolibrary.org/obo/mi/> . \n" + 
-				"@prefix ncit: <http://purl.obolibrary.org/obo/ncit/> . \n" +
-				"@prefix uberon: <http://purl.obolibrary.org/obo/uberon/> . \n";
+				//"@prefix uniprot: <http://www.uniprot.org/uniprot/> .\n" +
+				"@prefix uniprot: <http://bio2rdf.org/uniprot:> .\n" +
+				"@prefix mi: <http://purl.obolibrary.org/obo/MI_> . \n" + 
+				"@prefix ncit: <http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#> . \n" +
+				"@prefix uberon: <http://purl.obolibrary.org/obo/UBERON_> . \n";
 		
 		try{
 		    int counter = 0;
@@ -244,7 +245,8 @@ public class ReachXml2Trig extends ReachParseXml {
 				writer.println("\t\tkgcs:hasArgument\t");
 				for(int i = 0; i < event_mention.getArgumentList().size(); i++) {
 					writer.println("\t\t\t [ kgcs:hasArgumentID\t" + kb + event_mention.getArgumentList().get(i).getArg()+ " ;");
-					writer.println("\t\t\t\tkgcs:hasArgumentType\t" + kb + event_mention.getArgumentList().get(i).getArgumentType() + " ;");
+					writer.println("\t\t\t\trdf:type\t" + mentionTypeMap.get(event_mention.getArgumentList().get(i).getType()) + " ;");
+				    writer.println("\t\t\t\tkgcs:hasArgumentType\t" + kb + event_mention.getArgumentList().get(i).getArgumentType() + " ;");
 					writer.println("\t\t\t\tkgcs:hasObjectType\tkgcs:" + event_mention.getArgumentList().get(i).getObjectType() + " ;");
 				    writer.println("\t\t\t\tkgcs:hasIndex\t" + event_mention.getArgumentList().get(i).getIndex() + " ;");
 				    if (i == event_mention.getArgumentList().size() - 1 ){

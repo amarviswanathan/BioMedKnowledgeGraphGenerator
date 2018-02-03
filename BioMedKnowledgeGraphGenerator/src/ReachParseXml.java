@@ -254,6 +254,8 @@ public class ReachParseXml {
 						argument.setIndex(Integer.parseInt(argElement.getElementsByTagName("index").item(0).getTextContent()));
 					if(argElement.getElementsByTagName("argument-label").item(0)!=null)
 						argument.setType(argElement.getElementsByTagName("argument-label").item(0).getTextContent());
+					if(argElement.getElementsByTagName("type").item(0)!=null)
+						argument.setType(argElement.getElementsByTagName("type").item(0).getTextContent());
 					if(argElement.getElementsByTagName("arg").item(0)!=null)
 						argument.setArg(argElement.getElementsByTagName("arg").item(0).getTextContent());
 					
