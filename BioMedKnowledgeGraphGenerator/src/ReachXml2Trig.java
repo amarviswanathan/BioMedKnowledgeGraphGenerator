@@ -113,7 +113,8 @@ public class ReachXml2Trig extends ReachParseXml {
 		    PrintWriter writer = new PrintWriter(WRITE_LOCATION + "entity_mentions-" + index + ".trig", "UTF-8");
 		    writer.println(prefixes);
 		    for(EntityMention entity_mention : entity_mentions) {
-		    	if(counter == entity_mentions.size()/30){
+		    	//if(counter == entity_mentions.size()/30){
+		    	if(counter == entity_mentions.size()/1){
 		    		index++;
 		    		writer.close();
 		    		counter=0;
@@ -190,7 +191,8 @@ public class ReachXml2Trig extends ReachParseXml {
 			PrintWriter writer = new PrintWriter(WRITE_LOCATION + "event_mentions-" + index + ".trig", "UTF-8");
 			writer.println(prefixes);
 		    for(EventMention event_mention : event_mentions) {
-		    	if(counter == event_mentions.size()/5){
+		    	// if(counter == event_mentions.size()/5){
+		    	if(counter == event_mentions.size()/1){
 		    		index++;
 		    		writer.close();
 		    		counter=0;
@@ -361,7 +363,8 @@ public class ReachXml2Trig extends ReachParseXml {
 		    PrintWriter writer = new PrintWriter(WRITE_LOCATION + "sentences-" + index + ".trig", "UTF-8");
 		    writer.println(prefixes);
 		    for(Sentence sentence : sentences) {
-		    	if(counter == sentences.size()/20){
+		    	//if(counter == sentences.size()/20){
+		    	if(counter == sentences.size()/1){
 		    		index++;
 		    		writer.close();
 		    		counter=0;
@@ -417,7 +420,8 @@ public class ReachXml2Trig extends ReachParseXml {
 		    PrintWriter writer = new PrintWriter(WRITE_LOCATION + "passages-" + index + ".trig", "UTF-8");
 		    writer.println(prefixes);
 		    for(Passage passage : passages) {
-		    	if(counter == passages.size()/3){
+		    	//if(counter == passages.size()/3){
+		    	if(counter == passages.size()/1){
 		    		index++;
 		    		writer.close();
 		    		counter=0;
