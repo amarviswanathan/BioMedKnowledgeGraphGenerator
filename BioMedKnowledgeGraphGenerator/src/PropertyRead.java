@@ -11,6 +11,7 @@ public class PropertyRead {
 	String ttlFileDirectory;
 	String trigFileDirectory;
 	String mentionmapFileLocation;
+	String propertiesFileDirectory;
 	
 	public PropertyRead() {
 		Properties prop = new Properties();
@@ -20,8 +21,8 @@ public class PropertyRead {
 		
 		try {
 			//Load the properties file
-			//input = new FileInputStream("C:/Users/grossi2/Documents/GitHub/BioMedKnowledgeGraphGenerator/BioMedKnowledgeGraphGenerator/properties/config.properties");
-			input = new FileInputStream("/home/sabbir/Programs/BioMedKnowledgeGraphGenerator/BioMedKnowledgeGraphGenerator/properties/config.properties");
+			input = new FileInputStream("C:/Users/grossi2/Documents/GitHub/BioMedKnowledgeGraphGenerator/BioMedKnowledgeGraphGenerator/properties/config.properties");
+			//input = new FileInputStream("/home/sabbir/Programs/BioMedKnowledgeGraphGenerator/BioMedKnowledgeGraphGenerator/properties/config.properties");
 			prop.load(input);
 
 			//Get and store each file directory/location
@@ -31,6 +32,7 @@ public class PropertyRead {
 			this.ttlFileDirectory = prop.getProperty("ttlFileDirectory");
 			this.trigFileDirectory = prop.getProperty("trigFileDirectory");
 			this.mentionmapFileLocation = prop.getProperty("mentionmapFileLocation");
+			this.propertiesFileDirectory = prop.getProperty("propertiesFileDirectory");
 
 		} catch (IOException ex) {
 			ex.printStackTrace();
