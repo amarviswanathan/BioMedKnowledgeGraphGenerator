@@ -21,8 +21,8 @@ public class PropertyRead {
 		
 		try {
 			//Load the properties file
-			input = new FileInputStream("C:/Users/grossi2/Documents/GitHub/BioMedKnowledgeGraphGenerator/BioMedKnowledgeGraphGenerator/properties/config.properties");
-			//input = new FileInputStream("/home/sabbir/Programs/BioMedKnowledgeGraphGenerator/BioMedKnowledgeGraphGenerator/properties/config.properties");
+			//input = new FileInputStream("C:/Users/grossi2/Documents/GitHub/BioMedKnowledgeGraphGenerator/BioMedKnowledgeGraphGenerator/properties/config.properties");
+			input = new FileInputStream("/home/sabbir/Programs/BioMedKnowledgeGraphGenerator/BioMedKnowledgeGraphGenerator/properties/config.properties");
 			prop.load(input);
 
 			//Get and store each file directory/location
