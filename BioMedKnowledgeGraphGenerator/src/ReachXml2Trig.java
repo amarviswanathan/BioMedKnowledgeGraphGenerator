@@ -53,6 +53,7 @@ public class ReachXml2Trig extends ReachParseXml {
 	public static final String READ_LOCATION = mydirs.xmlFileDirectory;
 	public static final String WRITE_LOCATION = mydirs.trigFileDirectory;
 	public static final String MENTIONMAP_LOCATION = mydirs.mentionmapFileLocation;
+	public static final String PROPERTIES_LOCATION = mydirs.propertiesFileDirectory;
 	
 	
 	static Set<EntityMention> entity_mentions = new HashSet<EntityMention>();
@@ -76,6 +77,8 @@ public class ReachXml2Trig extends ReachParseXml {
 		contexts = reachxmlcontent.contexts;
 		sentences = reachxmlcontent.sentences;
 		passages = reachxmlcontent.passages;
+		
+		HashMap<String,String> pubmedMap = loadPubMedMap();
 		
 		//System.exit(0);
 		
@@ -105,7 +108,8 @@ public class ReachXml2Trig extends ReachParseXml {
 				"@prefix uniprot: <http://bio2rdf.org/uniprot:> .\n" +
 				"@prefix mi: <http://purl.obolibrary.org/obo/MI_> . \n" + 
 				"@prefix ncit: <http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#> . \n" +
-				"@prefix uberon: <http://purl.obolibrary.org/obo/UBERON_> . \n";
+				"@prefix uberon: <http://purl.obolibrary.org/obo/UBERON_> . \n" +
+				"@prefix pubmed: <http://http://bio2rdf.org/pubmed:> . \n";;
 		
 		try{
 		    int counter = 0;
@@ -211,6 +215,7 @@ public class ReachXml2Trig extends ReachParseXml {
 		    	writer.println(kb + "head-" + event_mention.getFrameID() + " {");
 		    	writer.println("\t" + kb + "nanoPub-" + event_mention.getFrameID() + "\trdf:type np:Nanopublication ;");
 		    	writer.println("\t\tnp:hasAssertion\t" + kb + "assertion-" + event_mention.getFrameID()+ " ;");
+		    	writer.println("\t\tnp:hasAttribution\t" + kb + "attribution-" + event_mention.getFrameID()+ " ;");
 		    	writer.println("\t\tnp:hasProvenance\t" + kb + "provenance-" + event_mention.getFrameID()+ " ;");
 		    	writer.println("\t\tnp:hasPublicationInfo\t" + kb + "pubInfo-" + event_mention.getFrameID() + " .");
 		    	writer.println("}\n");
@@ -243,7 +248,19 @@ public class ReachXml2Trig extends ReachParseXml {
 		    	}
 	    		writer.println("\t\trdfs:label \"" + event_mention.getText().replace("\"", "'").replace("\\", "/") + "\" ;");
 				writer.println("\t\trdfs:comment \"" + event_mention.getVerboseText().replace("\"", "'").replace("\\", "/") + "\" ;");
-				writer.println("\t\tkgcs:hasTrigger\t\"" + event_mention.getTrigger() + "\" ;");
+				if(event_mention.getTrigger() != null) {
+					writer.println("\t\tkgcs:hasTrigger\t\"" + event_mention.getTrigger() + "\" ;");
+				}
+				
+				
+				//SPECIAL FUNCTION TO GET THE REDRUGS LINKED DATA
+				ArrayList<String> supportingAssertions = getAssertionSupport(event_mention);
+				for(int it = 0; it < supportingAssertions.size(); it++) {
+					writer.println(supportingAssertions.get(it));
+				}
+				
+				
+				
 				writer.println("\t\tkgcs:hasArgument\t");
 				for(int i = 0; i < event_mention.getArgumentList().size(); i++) {
 					writer.println("\t\t\t [ kgcs:hasArgumentID\t" + kb + event_mention.getArgumentList().get(i).getArg()+ " ;");
@@ -262,6 +279,18 @@ public class ReachXml2Trig extends ReachParseXml {
 					//	System.out.println(event_mention.getArgumentList().get(i).getElements());
 				}
 		    	writer.println("}\n");
+		    	
+		    	
+		    	
+		    	//Write the NanoPub Attribution
+		    	writer.println(kb + "attribution-" + event_mention.getFrameID() + " {");
+		    	writer.println("\t" + kb + "assertion-" + event_mention.getFrameID() );
+		    	writer.println("\t\tprov:hadPrimarySource\tpubmed:" + findPubMedID(pubmedMap, event_mention.getFrameID()) + " .");
+		    	writer.println("}\n");
+		    	//System.out.println(getPMCString(event_mention.getFrameID()));
+		    	
+		    	
+		    	
 		    	writer.println(kb + "provenance-" + event_mention.getFrameID() + " {");
 		    	date = sdf.format(new Date());
 		    	writer.println("\t" + kb + "assertion-" + event_mention.getFrameID() ); 
@@ -475,6 +504,9 @@ public class ReachXml2Trig extends ReachParseXml {
 		System.out.println("Done");
 	}
 	
+	
+	//SUPPORT FUNCTIONS:
+	
 	public static HashMap<String,String> extractMentionMap() throws Exception{
 		BufferedReader br = new BufferedReader(new FileReader(MENTIONMAP_LOCATION));
 	    String line =  null;
@@ -487,5 +519,93 @@ public class ReachXml2Trig extends ReachParseXml {
 	    br.close();
 	    return mentionTypeMapRead;
 	}
-
+	
+	
+	//Used for output protein interactions to look like ReDrugs
+	public static ArrayList<String> getAssertionSupport(EventMention eventM_curr) throws Exception {
+		//Assumes the entity mentions are available
+		ArrayList<String> outputArray = new ArrayList<String>();
+		
+		//Need to write a special case for arguments with a length of 1
+		if(eventM_curr.getArgumentList().size() == 1) {
+			return outputArray;
+		}
+		
+		for(int i_tmp = 0; i_tmp < eventM_curr.getArgumentList().size(); i_tmp++) {
+			//Need a special case for event mentions
+			String foundref = "";
+			if(eventM_curr.getArgumentList().get(i_tmp).getArgumentType() == ArgumentType.EVENT) {
+				for(EventMention evt_mention : event_mentions) {
+					if (evt_mention.getFrameID().equals(eventM_curr.getArgumentList().get(i_tmp).getArg())) {
+						for(EntityMention ety_mention : entity_mentions) {
+							if(evt_mention.getArgumentList().get(0).getArg().equals(ety_mention.getFrameID())) {
+								System.out.println(evt_mention.getArgumentList().get(0).getArg());
+								foundref = ety_mention.getXref().getNamespace() + ":" + ety_mention.getXref().getID();
+								break;
+								//outputArray.add("\t\tsio:has-participant\t" + ety_mention.getXref().getNamespace() + ":" + ety_mention.getXref().getID());
+							}
+						}
+					}
+				}
+			}
+			
+			for(EntityMention ety_mention : entity_mentions) {
+				//Checks to see if argument frame-id is the same as the entity frame-id
+				if(ety_mention.getFrameID().equals(eventM_curr.getArgumentList().get(i_tmp).getArg())) {
+					/*
+					if(eventM_curr.getText() == eventM_curr.getArgumentList().get(i_tmp).getText()) {
+						//if(eventM_curr.getArgumentList().size() == 1) {
+						//	outputArray.add("\t\tsio:has-component-part\t" + ety_mention.getXref().getNamespace() + ":" + ety_mention.getXref().getID());
+						//	break;
+						//}
+						//outputArray.add("\t\tsio:has-target\t" + ety_mention.getXref().getNamespace() + ":" + ety_mention.getXref().getID());
+					}
+					else {
+						//outputArray.add("\t\tsio:has-participant\t" + ety_mention.getXref().getNamespace() + ":" + ety_mention.getXref().getID());
+					}*/
+					foundref = ety_mention.getXref().getNamespace() + ":" + ety_mention.getXref().getID();
+					break;
+				}
+			}
+			if(!foundref.isEmpty()) {
+				if(outputArray.size()==1) {
+					outputArray.add("\t\tsio:has-participant\t" + foundref);
+				}
+				else if(outputArray.size()==0) {
+					outputArray.add("\t\tsio:has-target\t" + foundref);
+				}
+			}
+			if(outputArray.size()==2) break;
+		}
+		return outputArray;
+	}
+	
+	//Usage: Retrieve the PubMed IDs and corresponding PMC IDs from the generated files
+	//Current included files were generated by Ian Gross for Thesis Work. Files include IDs that are in IRefIndex human data-set
+	public static HashMap<String,String> loadPubMedMap() throws Exception{
+		HashMap<String,String> pubmedMapRead = new HashMap<String, String>();
+		BufferedReader br_pmid = new BufferedReader(new FileReader(PROPERTIES_LOCATION + "9606_mitab_PM_ids_open_access.txt"));
+		BufferedReader br_pmcid = new BufferedReader(new FileReader(PROPERTIES_LOCATION + "9606_mitab_PMC_ids_open_access.txt"));
+		String pmids_string = br_pmid.readLine();
+		String pmcids_string = br_pmcid.readLine();
+		br_pmid.close();
+		br_pmcid.close();
+		String pmids_list[] = pmids_string.split(" ");
+		String pmcids_list[] = pmcids_string.split(" ");
+		for(int i = 0; i < pmids_list.length; i++) {
+			pubmedMapRead.put(pmcids_list[i], pmids_list[i]);
+		}
+		return pubmedMapRead;
+	}
+	
+	public static String findPubMedID(HashMap<String,String> pmidPmcMap, String frameID) throws Exception{
+		int position = frameID.indexOf('-')+1;
+		String pmcid = frameID.substring(position, frameID.indexOf('-', position+2));
+		String foundPMID = pmidPmcMap.get(pmcid);
+		if (foundPMID != null) {return foundPMID;}
+		else {
+			//TO DO: Use some Java HTTP Library to fetch and retrieve the pmid (if the pmcid has a pmid)
+			return pmcid;
+		}
+	}
 }
