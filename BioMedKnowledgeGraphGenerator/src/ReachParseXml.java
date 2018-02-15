@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -188,12 +189,23 @@ public class ReachParseXml {
 					objmeta.setComponent(omElement.getElementsByTagName("component").item(0).getTextContent());
 					eventM.setObjectMeta(objmeta);
 				}
-				// Set Text
-				eventM.setText(fElement.getElementsByTagName("text").item(0).getTextContent());
+				// Set Text (the last one, otherwise it will get an argument's text)
+				eventM.setText(fElement.getElementsByTagName("text").item(fElement.getElementsByTagName("text").getLength()-1).getTextContent());
 				// Set Verbose Text
 				eventM.setVerboseText(fElement.getElementsByTagName("verbose-text").item(0).getTextContent());
-				// Set Type
-				eventM.setType(fElement.getElementsByTagName("type").item(0).getTextContent());
+				
+				// Set Type (New Version) - Get the type of the overall event, rather than the argument event
+				for (int argPos = 0; argPos < fElement.getElementsByTagName("type").getLength(); argPos++) {
+					String typeFound = fElement.getElementsByTagName("type").item(argPos).getTextContent();
+					if(!typeFound.equals("controlled") && !typeFound.equals("controller") && !typeFound.equals("theme")) {
+						//System.out.println("--- " + fElement.getElementsByTagName("type").item(argPos).getTextContent());
+						//TimeUnit.SECONDS.sleep(1);
+						
+						// Set Type
+						eventM.setType(typeFound);
+					}
+				}	
+				
 				// Set SubType
 				if(fElement.getElementsByTagName("subtype").item(0)!=null)
 					eventM.setSubType(fElement.getElementsByTagName("subtype").item(0).getTextContent());

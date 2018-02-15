@@ -109,7 +109,7 @@ public class ReachXml2Trig extends ReachParseXml {
 				"@prefix mi: <http://purl.obolibrary.org/obo/MI_> . \n" + 
 				"@prefix ncit: <http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#> . \n" +
 				"@prefix uberon: <http://purl.obolibrary.org/obo/UBERON_> . \n" +
-				"@prefix pubmed: <http://http://bio2rdf.org/pubmed:> . \n";;
+				"@prefix pubmed: <http://http://bio2rdf.org/pubmed:> . \n";
 		
 		try{
 		    int counter = 0;
@@ -223,6 +223,7 @@ public class ReachXml2Trig extends ReachParseXml {
 		    	writer.println("\t" + kb + event_mention.getFrameID() );
 		    	
 		    	if(mentionTypeMap.containsKey(event_mention.getType())){
+		    		//System.out.println(mentionTypeMap.get(event_mention.getType()));
 		    		if(mentionTypeMap.get(event_mention.getType()).contains(";")){
 	    				String types[] = mentionTypeMap.get(event_mention.getType()).split(";", -1);
 	    				for(String type : types){
@@ -236,7 +237,11 @@ public class ReachXml2Trig extends ReachParseXml {
 		    		writer.println("\t\tkges:hasMentionType\t\"" + event_mention.getType() + "\"^^xsd:string ;");
 	    		}
 		    	if(mentionTypeMap.containsKey(event_mention.getSubType())){
-		    		if(mentionTypeMap.get(event_mention.getSubType()).contains(";")){
+		    		if(event_mention.getType().equals(event_mention.getSubType())) {
+		    			//skip this subtype, because it will print the same stuff twice
+		    		}
+		    		//System.out.println(mentionTypeMap.get(event_mention.getSubType()));
+		    		else if(mentionTypeMap.get(event_mention.getSubType()).contains(";")){
 	    				String types[] = mentionTypeMap.get(event_mention.getSubType()).split(";", -1);
 	    				for(String type : types){
 	    		    		writer.println("\t\trdf:type\t" + type.replaceAll(" ", "") + " ;");
