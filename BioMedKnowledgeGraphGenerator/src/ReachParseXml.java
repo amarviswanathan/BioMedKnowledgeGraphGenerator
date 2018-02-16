@@ -197,13 +197,15 @@ public class ReachParseXml {
 				// Set Type (New Version) - Get the type of the overall event, rather than the argument event
 				for (int argPos = 0; argPos < fElement.getElementsByTagName("type").getLength(); argPos++) {
 					String typeFound = fElement.getElementsByTagName("type").item(argPos).getTextContent();
-					if(!typeFound.equals("controlled") && !typeFound.equals("controller") && !typeFound.equals("theme")) {
-						//System.out.println("--- " + fElement.getElementsByTagName("type").item(argPos).getTextContent());
-						//TimeUnit.SECONDS.sleep(1);
+					if(!typeFound.equals("controlled") && !typeFound.equals("controller") && !typeFound.equals("theme") && !typeFound.equals("site") && !typeFound.equals("destination")) {
 						
 						// Set Type
 						eventM.setType(typeFound);
 					}
+					/*else {
+						System.out.println("--- " + fElement.getElementsByTagName("type").item(argPos).getTextContent());
+						TimeUnit.SECONDS.sleep(1);
+					}*/
 				}	
 				
 				// Set SubType
@@ -260,14 +262,21 @@ public class ReachParseXml {
 							argument.setArgumentType(ArgumentType.ENTITY);
 						} else if (argElement.getElementsByTagName("argument-type").item(0).getTextContent().contentEquals("event")) {
 							argument.setArgumentType(ArgumentType.EVENT);
+						} else {
+							//Something else
+							//System.out.println(argElement.getElementsByTagName("argument-type").item(0).getTextContent());
+							//TimeUnit.SECONDS.sleep(5);
 						}
 					}
 					if(argElement.getElementsByTagName("index").item(0)!=null)
 						argument.setIndex(Integer.parseInt(argElement.getElementsByTagName("index").item(0).getTextContent()));
 					if(argElement.getElementsByTagName("argument-label").item(0)!=null)
 						argument.setType(argElement.getElementsByTagName("argument-label").item(0).getTextContent());
-					if(argElement.getElementsByTagName("type").item(0)!=null)
+					//if(argElement.getElementsByTagName("type").item(0)!=null)
+					//	argument.setType(argElement.getElementsByTagName("type").item(0).getTextContent());
+					if(argElement.getElementsByTagName("type").item(0)!=null) {
 						argument.setType(argElement.getElementsByTagName("type").item(0).getTextContent());
+					}
 					if(argElement.getElementsByTagName("arg").item(0)!=null)
 						argument.setArg(argElement.getElementsByTagName("arg").item(0).getTextContent());
 					

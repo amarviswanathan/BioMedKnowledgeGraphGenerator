@@ -91,9 +91,10 @@ public class ReachXml2Trig extends ReachParseXml {
 				"@prefix sio:     <http://semanticscience.org/resource/> .\n" + 
 				"@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n" +
 				"@prefix kgcs: 	<" + kgcs + ">.\n" + 
+				"@prefix kgcs-kb: 	<" + kgcs + "kb/>.\n" + 
 				"@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n"+ 
 				"@prefix owl: <http://www.w3.org/2002/07/owl#> .\n" +
-				"@prefix GO: <http://purl.obolibrary.org/obo/GO_> .\n" +
+				"@prefix go: <http://purl.obolibrary.org/obo/GO_> .\n" +
 				"@prefix np: <http://www.nanopub.org/nschema#> .\n" +
 				"@prefix pubchem: <http://rdf.ncbi.nlm.nih.gov/pubchem/compound/> .\n" + 
 				"@prefix hmdb: <http://identifiers.org/hmdb/> .\n" + 
@@ -109,6 +110,9 @@ public class ReachXml2Trig extends ReachParseXml {
 				"@prefix mi: <http://purl.obolibrary.org/obo/MI_> . \n" + 
 				"@prefix ncit: <http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#> . \n" +
 				"@prefix uberon: <http://purl.obolibrary.org/obo/UBERON_> . \n" +
+				"@prefix prov: <http://www.w3.org/ns/prov#> . \n" +
+				"@prefix uazid: <https://github.com/clulab/bioresources/> . \n" +
+				"@prefix uaz: <https://github.com/clulab/bioresources/> . \n" +
 				"@prefix pubmed: <http://http://bio2rdf.org/pubmed:> . \n";
 		
 		try{
@@ -150,7 +154,8 @@ public class ReachXml2Trig extends ReachParseXml {
 		    			}
 		    		}
 		    		else {
-			    		writer.println("\t\tkges:hasMentionType\t\"" + entity_mention.getType() + "\"^^xsd:string ;");
+		    			writer.println("\t\tkgcs:hasMentionType\t\"" + entity_mention.getType() + "\"^^xsd:string ;");
+			    		//writer.println("\t\tkges:hasMentionType\t\"" + entity_mention.getType() + "\"^^xsd:string ;");
 		    		}
 		    		//writer.println("\t\trdf:type\t" + entity_mention.getType() + " ;");
 		    		writer.println("\t\trdfs:label\t\"" + entity_mention.getText().replace("\"", "'").replace("\\", "/") + "\" .");
@@ -234,7 +239,8 @@ public class ReachXml2Trig extends ReachParseXml {
 	    			}
 	    		}
 	    		else {
-		    		writer.println("\t\tkges:hasMentionType\t\"" + event_mention.getType() + "\"^^xsd:string ;");
+	    			writer.println("\t\tkgcs:hasMentionType\t\"" + event_mention.getType() + "\"^^xsd:string ;");
+		    		//writer.println("\t\tkges:hasMentionType\t\"" + event_mention.getType() + "\"^^xsd:string ;");
 	    		}
 		    	if(mentionTypeMap.containsKey(event_mention.getSubType())){
 		    		if(event_mention.getType().equals(event_mention.getSubType())) {
@@ -269,7 +275,22 @@ public class ReachXml2Trig extends ReachParseXml {
 				writer.println("\t\tkgcs:hasArgument\t");
 				for(int i = 0; i < event_mention.getArgumentList().size(); i++) {
 					writer.println("\t\t\t [ kgcs:hasArgumentID\t" + kb + event_mention.getArgumentList().get(i).getArg()+ " ;");
-					writer.println("\t\t\t\trdf:type\t" + mentionTypeMap.get(event_mention.getArgumentList().get(i).getType()) + " ;");
+					// Check for multiple types, and get the mention map values for site and destination
+					String argType = event_mention.getArgumentList().get(i).getType();
+					if(mentionTypeMap.containsKey(argType)){
+			    		if(mentionTypeMap.get(argType).contains(";")){
+		    				String types[] = mentionTypeMap.get(argType).split(";", -1);
+		    				for(String type : types){
+		    		    		writer.println("\t\t\t\trdf:type\t" + type.replaceAll(" ", "") + " ;");
+		    				}
+		    			} else {
+				    		writer.println("\t\t\t\trdf:type\t" + mentionTypeMap.get(argType) + " ;");
+		    			}
+		    		}
+		    		else {
+		    			writer.println("\t\t\t\tkgcs:hasSemanticRole\t\"" + argType + "\"^^xsd:string ;");
+		    		}
+					//writer.println("\t\t\t\trdf:type\t" + mentionTypeMap.get(event_mention.getArgumentList().get(i).getType()) + " ;");
 				    writer.println("\t\t\t\tkgcs:hasArgumentType\t" + kb + event_mention.getArgumentList().get(i).getArgumentType() + " ;");
 					writer.println("\t\t\t\tkgcs:hasObjectType\tkgcs:" + event_mention.getArgumentList().get(i).getObjectType() + " ;");
 				    writer.println("\t\t\t\tkgcs:hasIndex\t" + event_mention.getArgumentList().get(i).getIndex() + " ;");
@@ -544,8 +565,14 @@ public class ReachXml2Trig extends ReachParseXml {
 					if (evt_mention.getFrameID().equals(eventM_curr.getArgumentList().get(i_tmp).getArg())) {
 						for(EntityMention ety_mention : entity_mentions) {
 							if(evt_mention.getArgumentList().get(0).getArg().equals(ety_mention.getFrameID())) {
-								System.out.println(evt_mention.getArgumentList().get(0).getArg());
-								foundref = ety_mention.getXref().getNamespace() + ":" + ety_mention.getXref().getID();
+								//System.out.println(evt_mention.getArgumentList().get(0).getArg());
+								int hyIndex = ety_mention.getXref().getID().indexOf(':');
+								if(hyIndex >= 0) {
+									foundref = ety_mention.getXref().getID().substring(0, hyIndex).toLowerCase() + ety_mention.getXref().getID().substring(hyIndex);
+								}
+								else {
+									foundref = ety_mention.getXref().getNamespace() + ":" + ety_mention.getXref().getID();
+								}
 								break;
 								//outputArray.add("\t\tsio:has-participant\t" + ety_mention.getXref().getNamespace() + ":" + ety_mention.getXref().getID());
 							}
@@ -568,16 +595,22 @@ public class ReachXml2Trig extends ReachParseXml {
 					else {
 						//outputArray.add("\t\tsio:has-participant\t" + ety_mention.getXref().getNamespace() + ":" + ety_mention.getXref().getID());
 					}*/
-					foundref = ety_mention.getXref().getNamespace() + ":" + ety_mention.getXref().getID();
+					int hyIndex = ety_mention.getXref().getID().indexOf(':');
+					if(hyIndex >= 0) {
+						foundref = ety_mention.getXref().getID().substring(0, hyIndex).toLowerCase() + ety_mention.getXref().getID().substring(hyIndex);
+					}
+					else {
+						foundref = ety_mention.getXref().getNamespace() + ":" + ety_mention.getXref().getID();
+					}
 					break;
 				}
 			}
 			if(!foundref.isEmpty()) {
 				if(outputArray.size()==1) {
-					outputArray.add("\t\tsio:has-participant\t" + foundref);
+					outputArray.add("\t\tsio:has-participant\t" + foundref + " ;");
 				}
 				else if(outputArray.size()==0) {
-					outputArray.add("\t\tsio:has-target\t" + foundref);
+					outputArray.add("\t\tsio:has-target\t" + foundref + " ;");
 				}
 			}
 			if(outputArray.size()==2) break;

@@ -40,3 +40,4 @@ tissuetype,sio:010002
 complex-assembly,go:0006461
 transcription,sio:010300; ncit:C17208
 amount,sio:000052; ncit:C25256
+destination,sio:010423
