@@ -1,5 +1,7 @@
 package bean;
 
+import java.util.ArrayList;
+
 public class Arguments {
 	ObjectType objectType = ObjectType.ARGUMENT;
 	String arg;
@@ -7,6 +9,8 @@ public class Arguments {
 	ArgumentType argumentType;
 	String text;
 	String type;
+	ArrayList<String> args;
+	
 	
 	public String getElements(){
 		return "\tObject Type: " + objectType +
@@ -22,6 +26,12 @@ public class Arguments {
 	}
 	public void setArg(String arg) {
 		this.arg = arg;
+	}
+	public ArrayList<String> getArgs() {
+		return args;
+	}
+	public void setArgs(ArrayList<String> args) {
+		this.args = args;
 	}
 	public int getIndex() {
 		return index;

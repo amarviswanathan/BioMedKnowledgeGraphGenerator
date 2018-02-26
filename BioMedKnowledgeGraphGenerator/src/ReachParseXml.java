@@ -190,7 +190,7 @@ public class ReachParseXml {
 					eventM.setObjectMeta(objmeta);
 				}
 				// Set Text (the last one, otherwise it will get an argument's text)
-				eventM.setText(fElement.getElementsByTagName("text").item(fElement.getElementsByTagName("text").getLength()-1).getTextContent());
+				eventM.setText(fElement.getElementsByTagName("text").item(fElement.getElementsByTagName("text").getLength()-1).getTextContent().replaceAll("\n", "").replaceAll("\r", ""));
 				// Set Verbose Text
 				eventM.setVerboseText(fElement.getElementsByTagName("verbose-text").item(0).getTextContent());
 				
@@ -254,7 +254,11 @@ public class ReachParseXml {
 					*/
 					
 					if(argElement.getElementsByTagName("text").item(0)!=null)
-						argument.setText(argElement.getElementsByTagName("text").item(0).getTextContent());
+						//if(argElement.getElementsByTagName("text").item(0).getTextContent().contains("\"")) {
+						//	System.out.println(argElement.getElementsByTagName("text").item(0).getTextContent());
+						//	TimeUnit.SECONDS.sleep(5);
+						//}
+						argument.setText(argElement.getElementsByTagName("text").item(0).getTextContent().replaceAll("\n", "").replaceAll("\r", "").replaceAll("\"", ""));
 					if(argElement.getElementsByTagName("argument-type").item(0)!=null){
 						if (argElement.getElementsByTagName("argument-type").item(0).getTextContent().contentEquals("complex")) {
 							argument.setArgumentType(ArgumentType.COMPLEX);
@@ -279,6 +283,20 @@ public class ReachParseXml {
 					}
 					if(argElement.getElementsByTagName("arg").item(0)!=null)
 						argument.setArg(argElement.getElementsByTagName("arg").item(0).getTextContent());
+					
+					if(argElement.getElementsByTagName("args").item(0)!=null) {
+						argument.setArg(argElement.getElementsByTagName("args").item(0).getTextContent());
+						
+						//This actually works... you have no idea how happy this makes me...
+						NodeList nl = argElement.getElementsByTagName("args").item(0).getChildNodes();
+						ArrayList<String> args_list = new ArrayList<String>();
+						for(int chr = 0; chr < nl.getLength(); chr++) {
+							args_list.add(nl.item(chr).getTextContent());
+						}
+						argument.setArgs(args_list);
+						//TimeUnit.SECONDS.sleep(5);
+					}
+						
 					
 					myArgList.add(argument);
 				}

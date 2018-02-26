@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -79,19 +80,18 @@ public class ReachXml2Trig extends ReachParseXml {
 		passages = reachxmlcontent.passages;
 		
 		HashMap<String,String> pubmedMap = loadPubMedMap();
-		
-		//System.exit(0);
+		Set<String> foundPubmedSet = new HashSet<String>();
 		
 		System.out.println("Printing Entity Mention TRIG to file");
 		String kb="kgcs-kb:";
 		String kgcs="http://tw.rpi.edu/web/Courses/Ontologies/2017/KGCS/KGCS/";
 	    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	    String date;
-		String prefixes="@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .\n" +
-				"@prefix sio:     <http://semanticscience.org/resource/> .\n" + 
-				"@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n" +
-				"@prefix kgcs: 	<" + kgcs + ">.\n" + 
-				"@prefix kgcs-kb: 	<" + kgcs + "kb/>.\n" + 
+		String prefixes="@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n" +
+				"@prefix sio: <http://semanticscience.org/resource/> .\n" + 
+				"@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n" +
+				"@prefix kgcs: <" + kgcs + ">.\n" + 
+				"@prefix kgcs-kb: <" + kgcs + "kb/>.\n" + 
 				"@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n"+ 
 				"@prefix owl: <http://www.w3.org/2002/07/owl#> .\n" +
 				"@prefix go: <http://purl.obolibrary.org/obo/GO_> .\n" +
@@ -113,7 +113,9 @@ public class ReachXml2Trig extends ReachParseXml {
 				"@prefix prov: <http://www.w3.org/ns/prov#> . \n" +
 				"@prefix uazid: <https://github.com/clulab/bioresources/> . \n" +
 				"@prefix uaz: <https://github.com/clulab/bioresources/> . \n" +
-				"@prefix pubmed: <http://http://bio2rdf.org/pubmed:> . \n";
+				"@prefix mesh: <http://id.nlm.nih.gov/mesh/vocab#> . \n" +
+				"@prefix chebi: <http://purl.obolibrary.org/obo/chebi_> . \n" +
+				"@prefix pubmed: <http://bio2rdf.org/pubmed:> . \n";
 		
 		try{
 		    int counter = 0;
@@ -200,8 +202,8 @@ public class ReachXml2Trig extends ReachParseXml {
 			PrintWriter writer = new PrintWriter(WRITE_LOCATION + "event_mentions-" + index + ".trig", "UTF-8");
 			writer.println(prefixes);
 		    for(EventMention event_mention : event_mentions) {
-		    	// if(counter == event_mentions.size()/5){
-		    	if(counter == event_mentions.size()/1){
+		    	// if(counter == event_mentions.size()/1){
+		    	if(counter == event_mentions.size()/8){
 		    		index++;
 		    		writer.close();
 		    		counter=0;
@@ -220,7 +222,6 @@ public class ReachXml2Trig extends ReachParseXml {
 		    	writer.println(kb + "head-" + event_mention.getFrameID() + " {");
 		    	writer.println("\t" + kb + "nanoPub-" + event_mention.getFrameID() + "\trdf:type np:Nanopublication ;");
 		    	writer.println("\t\tnp:hasAssertion\t" + kb + "assertion-" + event_mention.getFrameID()+ " ;");
-		    	writer.println("\t\tnp:hasAttribution\t" + kb + "attribution-" + event_mention.getFrameID()+ " ;");
 		    	writer.println("\t\tnp:hasProvenance\t" + kb + "provenance-" + event_mention.getFrameID()+ " ;");
 		    	writer.println("\t\tnp:hasPublicationInfo\t" + kb + "pubInfo-" + event_mention.getFrameID() + " .");
 		    	writer.println("}\n");
@@ -265,7 +266,7 @@ public class ReachXml2Trig extends ReachParseXml {
 				
 				
 				//SPECIAL FUNCTION TO GET THE REDRUGS LINKED DATA
-				ArrayList<String> supportingAssertions = getAssertionSupport(event_mention);
+				ArrayList<String> supportingAssertions = getAssertionSupport(event_mention, event_mention.getArgumentList().size());
 				for(int it = 0; it < supportingAssertions.size(); it++) {
 					writer.println(supportingAssertions.get(it));
 				}
@@ -292,6 +293,10 @@ public class ReachXml2Trig extends ReachParseXml {
 		    		}
 					//writer.println("\t\t\t\trdf:type\t" + mentionTypeMap.get(event_mention.getArgumentList().get(i).getType()) + " ;");
 				    writer.println("\t\t\t\tkgcs:hasArgumentType\t" + kb + event_mention.getArgumentList().get(i).getArgumentType() + " ;");
+				    //if(event_mention.getArgumentList().get(i).getArgumentType() == ArgumentType.COMPLEX) {
+				    //	System.out.println(event_mention.getFrameID());
+				    //	TimeUnit.SECONDS.sleep(5);
+				    //}
 					writer.println("\t\t\t\tkgcs:hasObjectType\tkgcs:" + event_mention.getArgumentList().get(i).getObjectType() + " ;");
 				    writer.println("\t\t\t\tkgcs:hasIndex\t" + event_mention.getArgumentList().get(i).getIndex() + " ;");
 				    if (i == event_mention.getArgumentList().size() - 1 ){
@@ -308,19 +313,12 @@ public class ReachXml2Trig extends ReachParseXml {
 		    	
 		    	
 		    	
-		    	//Write the NanoPub Attribution
-		    	writer.println(kb + "attribution-" + event_mention.getFrameID() + " {");
-		    	writer.println("\t" + kb + "assertion-" + event_mention.getFrameID() );
-		    	writer.println("\t\tprov:hadPrimarySource\tpubmed:" + findPubMedID(pubmedMap, event_mention.getFrameID()) + " .");
-		    	writer.println("}\n");
-		    	//System.out.println(getPMCString(event_mention.getFrameID()));
-		    	
-		    	
 		    	
 		    	writer.println(kb + "provenance-" + event_mention.getFrameID() + " {");
 		    	date = sdf.format(new Date());
 		    	writer.println("\t" + kb + "assertion-" + event_mention.getFrameID() ); 
-		    	writer.println("\t\tprov:generatedAtTime\t\"" + date + "Z\"^^xsd:dateTime .\n");
+		    	writer.println("\t\tprov:generatedAtTime\t\"" + date + "Z\"^^xsd:dateTime .");
+		    	
 		    	writer.println("\t" + kb + event_mention.getFrameID());
 				writer.println("\t\tkgcs:hasFrameType\tkgcs:Frame-" + event_mention.getFrameType().toString() + " ;");
 				if(event_mention.getObjectMeta()!=null){
@@ -346,10 +344,26 @@ public class ReachXml2Trig extends ReachParseXml {
 			    	writer.println("\t\tkgcs:boolIsHypothesis\t \"" + event_mention.getIsHypothesis()+ "\" ;");
 			    }
 			    writer.println("\t\tkgcs:fromSentence\t" + kb + event_mention.getSentenceID() + " .");
+			    
+			    
 			    writer.println("}\n");
+			    
+			    
+			    
+			    
+			    
+			    
+			    
 		    	writer.println(kb + "pubInfo-" + event_mention.getFrameID() + " {");
 		    	date = sdf.format(new Date());
+		    	writer.println("\t" + kb + "assertion-" + event_mention.getFrameID() ); 
+		    	//Write the NanoPub Attribution
+		    	String foundPMID = findPubMedID(pubmedMap, event_mention.getFrameID());
+		    	writer.println("\t\tprov:hadPrimarySource\tpubmed:" + foundPMID + " .\n");
+		    	foundPubmedSet.add(foundPMID);
+		    	
 		    	writer.println("\t" + kb + "nanoPub-" + event_mention.getFrameID() );
+		    	writer.println("\t\tprov:wasAssociatedWith\t\"Reach\" ;");
 		    	writer.println("\t\tprov:generatedAtTime\t\"" + date + "Z\"^^xsd:dateTime .\n");
 		    	writer.println("\t" + kb + event_mention.getFrameID());
 				writer.println("\t\tkgcs:hasStartPositionReference\t" + kb + event_mention.getStartPos().getReference() + " ;");
@@ -527,11 +541,25 @@ public class ReachXml2Trig extends ReachParseXml {
 		} catch (IOException e) {
 		   // do something		
 		}
+		//ArrayList<String> foundPubmedList = new ArrayList<String>(foundPubmedSet);
+		//PrintPMIDList(foundPubmedList);
+		
 		System.out.println("Done");
 	}
 	
 	
 	//SUPPORT FUNCTIONS:
+	
+	
+	public static void PrintPMIDList(ArrayList<String> PMID_List) throws Exception{
+		//Extra function to print a file of all the PMIDs found during the iteration (or PMCIDs, or both)
+		PrintWriter fwriter = new PrintWriter(WRITE_LOCATION + "Found_PMID_List.txt", "UTF-8");
+		fwriter.print("pubmed:" + PMID_List.get(0));
+		for(int pyt = 1; pyt < PMID_List.size(); pyt++) {
+			fwriter.print(" pubmed:" + PMID_List.get(pyt));
+		}
+		fwriter.close();
+	}
 	
 	public static HashMap<String,String> extractMentionMap() throws Exception{
 		BufferedReader br = new BufferedReader(new FileReader(MENTIONMAP_LOCATION));
@@ -548,7 +576,7 @@ public class ReachXml2Trig extends ReachParseXml {
 	
 	
 	//Used for output protein interactions to look like ReDrugs
-	public static ArrayList<String> getAssertionSupport(EventMention eventM_curr) throws Exception {
+	public static ArrayList<String> getAssertionSupport(EventMention eventM_curr, int arglength) throws Exception {
 		//Assumes the entity mentions are available
 		ArrayList<String> outputArray = new ArrayList<String>();
 		
@@ -556,6 +584,7 @@ public class ReachXml2Trig extends ReachParseXml {
 		if(eventM_curr.getArgumentList().size() == 1) {
 			return outputArray;
 		}
+		boolean foundComplex = false;
 		
 		for(int i_tmp = 0; i_tmp < eventM_curr.getArgumentList().size(); i_tmp++) {
 			//Need a special case for event mentions
@@ -604,16 +633,38 @@ public class ReachXml2Trig extends ReachParseXml {
 					}
 					break;
 				}
+				//Need a special case for complex
+				if(eventM_curr.getArgumentList().get(i_tmp).getArgumentType() == ArgumentType.COMPLEX) {
+					ArrayList<String> args_list = eventM_curr.getArgumentList().get(i_tmp).getArgs();
+					for(int itny = 0; itny < args_list.size(); itny++) {
+						if(ety_mention.getFrameID().equals(args_list.get(itny))) {
+							int hyIndex = ety_mention.getXref().getID().indexOf(':');
+							if(hyIndex >= 0) {
+								foundref = ety_mention.getXref().getID().substring(0, hyIndex).toLowerCase() + ety_mention.getXref().getID().substring(hyIndex);
+							}
+							else {
+								foundref = ety_mention.getXref().getNamespace() + ":" + ety_mention.getXref().getID();
+							}
+							outputArray.add("\t\tsio:hasComponentPart\t" + foundref + " ;");
+						}
+					}
+					foundComplex = true;
+				}
 			}
+			//continue if it was a complex
+			if(foundComplex == true) {
+				continue;
+			}
+			
 			if(!foundref.isEmpty()) {
-				if(outputArray.size()==1) {
-					outputArray.add("\t\tsio:has-participant\t" + foundref + " ;");
+				if(outputArray.size()>0) {
+					outputArray.add("\t\tsio:hasParticipant\t" + foundref + " ;");
 				}
 				else if(outputArray.size()==0) {
-					outputArray.add("\t\tsio:has-target\t" + foundref + " ;");
+					outputArray.add("\t\tsio:hasTarget\t" + foundref + " ;");
 				}
 			}
-			if(outputArray.size()==2) break;
+			if(outputArray.size()==arglength) break;
 		}
 		return outputArray;
 	}
