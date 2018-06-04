@@ -40,11 +40,8 @@ import bean.Sentence;
 import bean.XRefs;
 
 /**
- * 
- */
-
-/**
  * @author Sabbir Rashid
+ * @author Ian Gross
  *
  */
 public class ReachXml2Trig extends ReachParseXml {
@@ -56,6 +53,12 @@ public class ReachXml2Trig extends ReachParseXml {
 	public static final String MENTIONMAP_LOCATION = mydirs.mentionmapFileLocation;
 	public static final String PROPERTIES_LOCATION = mydirs.propertiesFileDirectory;
 	
+	//Declare the number of files spread out results to
+	public static final int NUM_OF_ENTITY_MENTION_FILES = 1;
+	public static final int NUM_OF_EVENT_MENTION_FILES = 25;
+	public static final int NUM_OF_SENTENCE_FILES = 1;
+	public static final int NUM_OF_PASSAGE_FILES = 1;
+	
 	
 	static Set<EntityMention> entity_mentions = new HashSet<EntityMention>();
 	static Set<EventMention> event_mentions = new HashSet<EventMention>();
@@ -65,6 +68,9 @@ public class ReachXml2Trig extends ReachParseXml {
 	/**
 	 * @param args
 	 */
+	
+	
+	
 	
 	public static void main(String[] args) throws Exception{
 		
@@ -79,8 +85,14 @@ public class ReachXml2Trig extends ReachParseXml {
 		sentences = reachxmlcontent.sentences;
 		passages = reachxmlcontent.passages;
 		
+		System.out.println("Parsing of XML documents complete. Starting nanopublication creation process to TRIG...");
+		TimeUnit.SECONDS.sleep(1);
+		
+		// TODO Remove these lists
 		HashMap<String,String> pubmedMap = loadPubMedMap();
 		Set<String> foundPubmedSet = new HashSet<String>();
+		
+		
 		
 		System.out.println("Printing Entity Mention TRIG to file");
 		String kb="kgcs-kb:";
@@ -88,7 +100,7 @@ public class ReachXml2Trig extends ReachParseXml {
 	    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	    String date;
 		String prefixes="@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n" +
-				"@prefix sio: <http://semanticscience.org/resource/> .\n" + 
+				"@prefix sio: <http://semanticscience.org/resource/SIO_> .\n" + 
 				"@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n" +
 				"@prefix kgcs: <" + kgcs + ">.\n" + 
 				"@prefix kgcs-kb: <" + kgcs + "kb/>.\n" + 
@@ -117,14 +129,16 @@ public class ReachXml2Trig extends ReachParseXml {
 				"@prefix chebi: <http://purl.obolibrary.org/obo/chebi_> . \n" +
 				"@prefix pubmed: <http://bio2rdf.org/pubmed:> . \n";
 		
+		
+		
+		
 		try{
 		    int counter = 0;
 		    int index = 0;
 		    PrintWriter writer = new PrintWriter(WRITE_LOCATION + "entity_mentions-" + index + ".trig", "UTF-8");
 		    writer.println(prefixes);
 		    for(EntityMention entity_mention : entity_mentions) {
-		    	//if(counter == entity_mentions.size()/30){
-		    	if(counter == entity_mentions.size()/1){
+		    	if(counter == entity_mentions.size()/NUM_OF_ENTITY_MENTION_FILES){
 		    		index++;
 		    		writer.close();
 		    		counter=0;
@@ -192,8 +206,11 @@ public class ReachXml2Trig extends ReachParseXml {
 		    }
 		    writer.close();
 		} catch (IOException e) {
-			   // do something
+			ErrorFound("ENTITY MENTION");
 		}
+		
+		
+		
 		System.out.println("Printing Event Mention TRIG to file");
 		
 		try{
@@ -202,23 +219,17 @@ public class ReachXml2Trig extends ReachParseXml {
 			PrintWriter writer = new PrintWriter(WRITE_LOCATION + "event_mentions-" + index + ".trig", "UTF-8");
 			writer.println(prefixes);
 		    for(EventMention event_mention : event_mentions) {
-		    	// if(counter == event_mentions.size()/1){
-		    	if(counter == event_mentions.size()/8){
+		    	if(counter == event_mentions.size()/NUM_OF_EVENT_MENTION_FILES){
 		    		index++;
 		    		writer.close();
 		    		counter=0;
 		    		writer = new PrintWriter(WRITE_LOCATION + "event_mentions-" + index + ".trig", "UTF-8");
 		    		writer.println(prefixes);
 		    	}
+		    	
 				System.out.println("Event Mention: " + event_mention.getFrameID());
-				//--------------------------------------------------------------------------------------------------------------
-				//Written by Ian Gross
-				//	Requires remodeling of our output to include multiple arguments
-				//for(int i = 0; i < event_mention.getArgumentList().size(); i++) {
-				//	System.out.println(event_mention.getArgumentList().get(i).getElements());
-				//}
-				//System.out.println(event_mention.getArgumentList().getElements());
-				//--------------------------------------------------------------------------------------------------------------
+				String foundPMID = findPubMedID(pubmedMap, event_mention.getFrameID());
+				
 		    	writer.println(kb + "head-" + event_mention.getFrameID() + " {");
 		    	writer.println("\t" + kb + "nanoPub-" + event_mention.getFrameID() + "\trdf:type np:Nanopublication ;");
 		    	writer.println("\t\tnp:hasAssertion\t" + kb + "assertion-" + event_mention.getFrameID()+ " ;");
@@ -270,6 +281,10 @@ public class ReachXml2Trig extends ReachParseXml {
 				for(int it = 0; it < supportingAssertions.size(); it++) {
 					writer.println(supportingAssertions.get(it));
 				}
+				//Write the NanoPub Attribution - TEMPORARY -----------------------------------------------------------------------
+		    	//String foundPMID = findPubMedID(pubmedMap, event_mention.getFrameID());
+		    	//writer.println("\t\tprov:hadPrimarySource\tpubmed:" + foundPMID + " ;\n");
+		    	//TEMPORARY -------------------------------------------------------------------------------------------------------
 				
 				
 				
@@ -330,14 +345,14 @@ public class ReachXml2Trig extends ReachParseXml {
                 	writer.println("\t\tkgcs:hasContext\t" + kb + event_mention.getContextID() + " ;");
                 }
                 writer.println("\t\tkgcs:foundBy\t\"" + event_mention.getFoundBy() + "\" ;");
-/*			    writer.println("\t\tkgcs:hasTrigger\t\"" + event_mention.getTrigger() + "\" ;");
-			    writer.println("\t\tkgcs:hasArgument\t" + kb + event_mention.getArguments().getArg() + " ;");
-			    writer.println("\t\tkgcs:hasArgumentObjectType\tkgcs:" + event_mention.getArguments().getObjectType().toString().toLowerCase().replaceAll("_","-") + " ;");
-			    writer.println("\t\tkgcs:hasArgumentIndex\t" + event_mention.getArguments().getIndex() + " ;");
-			    writer.println("\t\tkgcs:hasArgumentArgumentType\tkgcs:Argument-" + event_mention.getArguments().getArgumentType() + " ;");
-			    writer.println("\t\tkgcs:hasArgumentType\t\"" + event_mention.getArguments().getArgumentType() + "\" ;");
-			    writer.println("\t\tkgcs:hasArgumentLabel\t\"" + event_mention.getArguments().getText().replace("\"", "'").replace("\\", "/") + "\" ;");
-*/			    if (event_mention.getIsDirect() != null){
+			    //writer.println("\t\tkgcs:hasTrigger\t\"" + event_mention.getTrigger() + "\" ;");
+			    //writer.println("\t\tkgcs:hasArgument\t" + kb + event_mention.getArguments().getArg() + " ;");
+			    //writer.println("\t\tkgcs:hasArgumentObjectType\tkgcs:" + event_mention.getArguments().getObjectType().toString().toLowerCase().replaceAll("_","-") + " ;");
+			    //writer.println("\t\tkgcs:hasArgumentIndex\t" + event_mention.getArguments().getIndex() + " ;");
+			    //writer.println("\t\tkgcs:hasArgumentArgumentType\tkgcs:Argument-" + event_mention.getArguments().getArgumentType() + " ;");
+			    //writer.println("\t\tkgcs:hasArgumentType\t\"" + event_mention.getArguments().getArgumentType() + "\" ;");
+			    //writer.println("\t\tkgcs:hasArgumentLabel\t\"" + event_mention.getArguments().getText().replace("\"", "'").replace("\\", "/") + "\" ;");
+ 			    if (event_mention.getIsDirect() != null){
 			    	writer.println("\t\tkgcs:boolIsDirect\t\"" + event_mention.getIsDirect() + "\" ;");
 			    }
 			    if (event_mention.getIsHypothesis() != null){
@@ -358,12 +373,15 @@ public class ReachXml2Trig extends ReachParseXml {
 		    	date = sdf.format(new Date());
 		    	writer.println("\t" + kb + "assertion-" + event_mention.getFrameID() ); 
 		    	//Write the NanoPub Attribution
-		    	String foundPMID = findPubMedID(pubmedMap, event_mention.getFrameID());
+		    	//String foundPMID = findPubMedID(pubmedMap, event_mention.getFrameID());
+		    	writer.println("\t\tprov:hadPrimarySource\tpubmed:" + event_mention.getDocumentMeta().getDocumentID() + " ;");
 		    	writer.println("\t\tprov:hadPrimarySource\tpubmed:" + foundPMID + " .\n");
+		    	
+		    	
 		    	foundPubmedSet.add(foundPMID);
 		    	
 		    	writer.println("\t" + kb + "nanoPub-" + event_mention.getFrameID() );
-		    	writer.println("\t\tprov:wasAssociatedWith\t\"Reach\" ;");
+		    	writer.println("\t\tprov:wasAssociatedWith\t\"Reach\"^^xsd:string ;");
 		    	writer.println("\t\tprov:generatedAtTime\t\"" + date + "Z\"^^xsd:dateTime .\n");
 		    	writer.println("\t" + kb + event_mention.getFrameID());
 				writer.println("\t\tkgcs:hasStartPositionReference\t" + kb + event_mention.getStartPos().getReference() + " ;");
@@ -377,8 +395,9 @@ public class ReachXml2Trig extends ReachParseXml {
 		    }
 		    writer.close();
 		} catch (IOException e) {
-			   // do something
+			ErrorFound("EVENT MENTION");
 		}
+		
 		
 		try{
 		    PrintWriter writer = new PrintWriter(WRITE_LOCATION + "contexts.trig", "UTF-8");
@@ -423,7 +442,7 @@ public class ReachXml2Trig extends ReachParseXml {
 		    }
 		    writer.close();
 		} catch (IOException e) {
-			   // do something		
+			ErrorFound("CONTEXTS");
 		}
 		
 		try{
@@ -432,8 +451,7 @@ public class ReachXml2Trig extends ReachParseXml {
 		    PrintWriter writer = new PrintWriter(WRITE_LOCATION + "sentences-" + index + ".trig", "UTF-8");
 		    writer.println(prefixes);
 		    for(Sentence sentence : sentences) {
-		    	//if(counter == sentences.size()/20){
-		    	if(counter == sentences.size()/1){
+		    	if(counter == sentences.size()/NUM_OF_SENTENCE_FILES){
 		    		index++;
 		    		writer.close();
 		    		counter=0;
@@ -480,7 +498,7 @@ public class ReachXml2Trig extends ReachParseXml {
 			    }
 		    writer.close();
 		} catch (IOException e) {
-		   // do something		
+			ErrorFound("SENTENCES");
 		}    
 		
 		try{
@@ -489,8 +507,7 @@ public class ReachXml2Trig extends ReachParseXml {
 		    PrintWriter writer = new PrintWriter(WRITE_LOCATION + "passages-" + index + ".trig", "UTF-8");
 		    writer.println(prefixes);
 		    for(Passage passage : passages) {
-		    	//if(counter == passages.size()/3){
-		    	if(counter == passages.size()/1){
+		    	if(counter == passages.size()/NUM_OF_PASSAGE_FILES){
 		    		index++;
 		    		writer.close();
 		    		counter=0;
@@ -539,16 +556,27 @@ public class ReachXml2Trig extends ReachParseXml {
 		    }
 		    writer.close();
 		} catch (IOException e) {
-		   // do something		
+			ErrorFound("PASSAGES");
 		}
 		//ArrayList<String> foundPubmedList = new ArrayList<String>(foundPubmedSet);
 		//PrintPMIDList(foundPubmedList);
 		
-		System.out.println("Done");
+		
+		
+		System.out.println("Nanopublication Generation Complete.");
 	}
 	
 	
-	//SUPPORT FUNCTIONS:
+	
+	
+	//SUPPORT FUNCTIONS:---------------------------------------------------------
+	
+	
+	public static void ErrorFound(String errorType) throws Exception {
+		System.out.println("ERROR FOUND IN " + errorType + " SECTION");
+		TimeUnit.SECONDS.sleep(4);
+		return;
+	}
 	
 	
 	public static void PrintPMIDList(ArrayList<String> PMID_List) throws Exception{
@@ -589,6 +617,7 @@ public class ReachXml2Trig extends ReachParseXml {
 		for(int i_tmp = 0; i_tmp < eventM_curr.getArgumentList().size(); i_tmp++) {
 			//Need a special case for event mentions
 			String foundref = "";
+			String foundlabel = "";
 			if(eventM_curr.getArgumentList().get(i_tmp).getArgumentType() == ArgumentType.EVENT) {
 				for(EventMention evt_mention : event_mentions) {
 					if (evt_mention.getFrameID().equals(eventM_curr.getArgumentList().get(i_tmp).getArg())) {
@@ -602,6 +631,7 @@ public class ReachXml2Trig extends ReachParseXml {
 								else {
 									foundref = ety_mention.getXref().getNamespace() + ":" + ety_mention.getXref().getID();
 								}
+								foundlabel = ety_mention.getText().replace("\"", "'").replaceAll("\n", "").replaceAll("\r", "");
 								break;
 								//outputArray.add("\t\tsio:has-participant\t" + ety_mention.getXref().getNamespace() + ":" + ety_mention.getXref().getID());
 							}
@@ -613,17 +643,9 @@ public class ReachXml2Trig extends ReachParseXml {
 			for(EntityMention ety_mention : entity_mentions) {
 				//Checks to see if argument frame-id is the same as the entity frame-id
 				if(ety_mention.getFrameID().equals(eventM_curr.getArgumentList().get(i_tmp).getArg())) {
-					/*
-					if(eventM_curr.getText() == eventM_curr.getArgumentList().get(i_tmp).getText()) {
-						//if(eventM_curr.getArgumentList().size() == 1) {
-						//	outputArray.add("\t\tsio:has-component-part\t" + ety_mention.getXref().getNamespace() + ":" + ety_mention.getXref().getID());
-						//	break;
-						//}
-						//outputArray.add("\t\tsio:has-target\t" + ety_mention.getXref().getNamespace() + ":" + ety_mention.getXref().getID());
-					}
-					else {
-						//outputArray.add("\t\tsio:has-participant\t" + ety_mention.getXref().getNamespace() + ":" + ety_mention.getXref().getID());
-					}*/
+					//System.out.println(ety_mention.getXref().getID());
+					
+					
 					int hyIndex = ety_mention.getXref().getID().indexOf(':');
 					if(hyIndex >= 0) {
 						foundref = ety_mention.getXref().getID().substring(0, hyIndex).toLowerCase() + ety_mention.getXref().getID().substring(hyIndex);
@@ -631,6 +653,8 @@ public class ReachXml2Trig extends ReachParseXml {
 					else {
 						foundref = ety_mention.getXref().getNamespace() + ":" + ety_mention.getXref().getID();
 					}
+					foundlabel = ety_mention.getText().replace("\"", "'").replaceAll("\n", "").replaceAll("\r", "");
+					//TimeUnit.SECONDS.sleep(1);
 					break;
 				}
 				//Need a special case for complex
@@ -646,6 +670,8 @@ public class ReachXml2Trig extends ReachParseXml {
 								foundref = ety_mention.getXref().getNamespace() + ":" + ety_mention.getXref().getID();
 							}
 							outputArray.add("\t\tsio:hasComponentPart\t" + foundref + " ;");
+							String foundcomplexlabel = ety_mention.getText().replace("\"", "'").replaceAll("\n", "").replaceAll("\r", "");
+							outputArray.add("\t\t" + foundref + " [ rdfs:label\t\"" + foundcomplexlabel + "\" ];");
 						}
 					}
 					foundComplex = true;
@@ -659,12 +685,14 @@ public class ReachXml2Trig extends ReachParseXml {
 			if(!foundref.isEmpty()) {
 				if(outputArray.size()>0) {
 					outputArray.add("\t\tsio:hasParticipant\t" + foundref + " ;");
+					outputArray.add("\t\t" + foundref + " [ rdfs:label\t\"" + foundlabel + "\" ];");
 				}
 				else if(outputArray.size()==0) {
 					outputArray.add("\t\tsio:hasTarget\t" + foundref + " ;");
+					outputArray.add("\t\t" + foundref + " [ rdfs:label\t\"" + foundlabel + "\" ];");
 				}
 			}
-			if(outputArray.size()==arglength) break;
+			if(outputArray.size()==arglength*2) break;
 		}
 		return outputArray;
 	}
@@ -673,8 +701,8 @@ public class ReachXml2Trig extends ReachParseXml {
 	//Current included files were generated by Ian Gross for Thesis Work. Files include IDs that are in IRefIndex human data-set
 	public static HashMap<String,String> loadPubMedMap() throws Exception{
 		HashMap<String,String> pubmedMapRead = new HashMap<String, String>();
-		BufferedReader br_pmid = new BufferedReader(new FileReader(PROPERTIES_LOCATION + "9606_mitab_PM_ids_open_access.txt"));
-		BufferedReader br_pmcid = new BufferedReader(new FileReader(PROPERTIES_LOCATION + "9606_mitab_PMC_ids_open_access.txt"));
+		BufferedReader br_pmid = new BufferedReader(new FileReader(PROPERTIES_LOCATION + "9606_mitab_PM_ids.txt"));
+		BufferedReader br_pmcid = new BufferedReader(new FileReader(PROPERTIES_LOCATION + "9606_mitab_PMC_ids.txt"));
 		String pmids_string = br_pmid.readLine();
 		String pmcids_string = br_pmcid.readLine();
 		br_pmid.close();

@@ -11,6 +11,7 @@ public class EventMention {
 	FrameType frameType = FrameType.EVENT_MENTION; //
 	ObjectType objectType; //
 	ObjectMeta objectMeta;//
+	DocumentMeta documentMeta;
 	String frameID; //
 	String text; //
 	String verboseText; //
@@ -71,6 +72,12 @@ public class EventMention {
 	}
 	public void setObjectMeta(ObjectMeta objectMeta) {
 		this.objectMeta = objectMeta;
+	}
+	public DocumentMeta getDocumentMeta() {
+		return documentMeta;
+	}
+	public void setDocumentMeta(DocumentMeta documentMeta) {
+		this.documentMeta = documentMeta;
 	}
 /*	public XRefs getXref() {
 		return xref;

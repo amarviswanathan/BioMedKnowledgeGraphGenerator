@@ -5,6 +5,7 @@ public class Context {
 	Sentence scope;
 	FrameType frameType = FrameType.CONTEXT;
 	ObjectType objectType = ObjectType.FRAME;
+	DocumentMeta documentMeta;
 	String frameID;
 	Facets facets;
 	public Sentence getScope() {
@@ -31,6 +32,12 @@ public class Context {
 	}
 	public void setObjectType(ObjectType objextType) {
 		this.objectType = objextType;
+	}
+	public DocumentMeta getDocumentMeta() {
+		return documentMeta;
+	}
+	public void setDocumentMeta(DocumentMeta documentMeta) {
+		this.documentMeta = documentMeta;
 	}
 	public String getFrameID() {
 		return frameID;

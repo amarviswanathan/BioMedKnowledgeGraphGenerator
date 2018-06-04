@@ -28,6 +28,7 @@ import com.sun.xml.internal.ws.util.xml.NodeListIterator;
 import bean.ArgumentType;
 import bean.Arguments;
 import bean.Context;
+import bean.DocumentMeta;
 import bean.EntityMention;
 import bean.EventMention;
 import bean.Facets;
@@ -38,6 +39,7 @@ import bean.Passage;
 import bean.Position;
 import bean.Sentence;
 import bean.XRefs;
+
 
 /**
  * 
@@ -104,6 +106,26 @@ public class ReachParseXml {
 		Document doc = builder.parse(xmlFile);
 		NodeList frameList = doc.getElementsByTagName("frames");
 		
+		
+		//Retrieve and set object meta information about the document
+		NodeList objectMeta = doc.getElementsByTagName("object-meta");
+		DocumentMeta documentM = new DocumentMeta();
+		if(objectMeta.getLength() < 1) {
+			//This should not occur, but in place to prevent possible issues
+			System.out.println("ERROR - INSUFFICIENT ITEM LENGTH IN OBJECT META");
+			TimeUnit.SECONDS.sleep(5);
+		} else {
+			Element metaElement = (Element) objectMeta.item(objectMeta.getLength()-1);
+			documentM.setDocumentID(metaElement.getElementsByTagName("doc-id").item(0).getTextContent());
+			documentM.setOrganization(metaElement.getElementsByTagName("organization").item(0).getTextContent());
+			documentM.setComponent(metaElement.getElementsByTagName("component").item(0).getTextContent());
+			documentM.setComponentType(metaElement.getElementsByTagName("component-type").item(0).getTextContent());
+			documentM.setProcessingTime(metaElement.getElementsByTagName("processing-start").item(0).getTextContent(), metaElement.getElementsByTagName("processing-end").item(0).getTextContent());
+		}
+		
+		
+		
+		
 		for(int i = 0; i<frameList.getLength(); i++) {
 			Node frame = frameList.item(i);
 			if (frame.getNodeType() != Node.ELEMENT_NODE) {
@@ -151,7 +173,11 @@ public class ReachParseXml {
 				entityM.setText(fElement.getElementsByTagName("text").item(0).getTextContent());
 				// Set Type
 				entityM.setType(fElement.getElementsByTagName("type").item(0).getTextContent());
+				// Set Document Meta
+				entityM.setDocumentMeta(documentM);
+				// Add entity mention to set
 				entity_mentions.add(entityM);
+				
 			} else if(frameType.contentEquals("event-mention")) {
 				System.out.println("Found Event Mention");
 				EventMention eventM = new EventMention();
@@ -174,7 +200,7 @@ public class ReachParseXml {
 				ep.setOffset(Integer.parseInt(epElement.getElementsByTagName("offset").item(0).getTextContent()));
 				eventM.setEndPos(ep);
 				// Set Xref
-				Element xElement = (Element) fElement.getElementsByTagName("xrefs").item(0);
+				//Element xElement = (Element) fElement.getElementsByTagName("xrefs").item(0);
 				/*XRefs xrefs = new XRefs();
 				if(xElement.getElementsByTagName("id").item(0)!=null)
 					xrefs.setID(xElement.getElementsByTagName("id").item(0).getTextContent());
@@ -198,10 +224,10 @@ public class ReachParseXml {
 				for (int argPos = 0; argPos < fElement.getElementsByTagName("type").getLength(); argPos++) {
 					String typeFound = fElement.getElementsByTagName("type").item(argPos).getTextContent();
 					if(!typeFound.equals("controlled") && !typeFound.equals("controller") && !typeFound.equals("theme") && !typeFound.equals("site") && !typeFound.equals("destination")) {
-						
 						// Set Type
 						eventM.setType(typeFound);
 					}
+					//For debugging purposes
 					/*else {
 						System.out.println("--- " + fElement.getElementsByTagName("type").item(argPos).getTextContent());
 						TimeUnit.SECONDS.sleep(1);
@@ -237,12 +263,11 @@ public class ReachParseXml {
 				eventM.setArguments(arguments);
 				
 				//Set Arguments - New Approach
+				//	Events should have at least one argument, and an arbitrary maximum number of events (usually 3 is the largest amount)
 				ArrayList<Arguments> myArgList = new ArrayList<Arguments>();
 				for (int argPos = 0; argPos < fElement.getElementsByTagName("arguments").getLength(); argPos++) {
 					Element argElement = (Element) fElement.getElementsByTagName("arguments").item(argPos);
-					//System.out.println(fElement.getElementsByTagName("arguments").item(0).getTextContent());
 					Arguments argument = new Arguments();
-					//System.out.println(argElement.getTextContent());
 					/*
 					System.out.println("----------------");
 					System.out.println(argElement.getElementsByTagName("text").item(0).getTextContent());
@@ -254,6 +279,7 @@ public class ReachParseXml {
 					*/
 					
 					if(argElement.getElementsByTagName("text").item(0)!=null)
+						//Debugging code for fixing issues in the provided text
 						//if(argElement.getElementsByTagName("text").item(0).getTextContent().contains("\"")) {
 						//	System.out.println(argElement.getElementsByTagName("text").item(0).getTextContent());
 						//	TimeUnit.SECONDS.sleep(5);
@@ -267,9 +293,9 @@ public class ReachParseXml {
 						} else if (argElement.getElementsByTagName("argument-type").item(0).getTextContent().contentEquals("event")) {
 							argument.setArgumentType(ArgumentType.EVENT);
 						} else {
-							//Something else
-							//System.out.println(argElement.getElementsByTagName("argument-type").item(0).getTextContent());
-							//TimeUnit.SECONDS.sleep(5);
+							//We encountered a new event type, if you notice this code being triggered, add more else if statements to account for unaccounted argument types
+							System.out.println("Encountered new argument type (consider code revision): " + argElement.getElementsByTagName("argument-type").item(0).getTextContent());
+							TimeUnit.SECONDS.sleep(2);
 						}
 					}
 					if(argElement.getElementsByTagName("index").item(0)!=null)
@@ -287,17 +313,16 @@ public class ReachParseXml {
 					if(argElement.getElementsByTagName("args").item(0)!=null) {
 						argument.setArg(argElement.getElementsByTagName("args").item(0).getTextContent());
 						
-						//This actually works... you have no idea how happy this makes me...
+						//Do not touch this code, not sure how this works.
 						NodeList nl = argElement.getElementsByTagName("args").item(0).getChildNodes();
 						ArrayList<String> args_list = new ArrayList<String>();
 						for(int chr = 0; chr < nl.getLength(); chr++) {
 							args_list.add(nl.item(chr).getTextContent());
 						}
 						argument.setArgs(args_list);
-						//TimeUnit.SECONDS.sleep(5);
 					}
 						
-					
+					//Add the current argument to the argument list
 					myArgList.add(argument);
 				}
 				eventM.setArgumentList(myArgList);
@@ -326,7 +351,13 @@ public class ReachParseXml {
 				// Set Context ID String
 				if(fElement.getElementsByTagName("context").item(0)!=null)
 					eventM.setContextID(fElement.getElementsByTagName("context").item(0).getTextContent());
+				
+				// Set Document Meta
+				eventM.setDocumentMeta(documentM);
+				
+				// Add event mention to set of event mentions
 				event_mentions.add(eventM);
+				
 			} else if(frameType.contentEquals("context")) {
 				System.out.println("Found Context");
 				Context context = new Context();
@@ -365,6 +396,8 @@ public class ReachParseXml {
 				if(facetElement.getElementsByTagName("tissue-type").item(0)!=null)
 					facets.setTissueType(facetElement.getElementsByTagName("tissue-type").item(0).getTextContent());
 				context.setFacets(facets);
+				// Set Document Meta
+				context.setDocumentMeta(documentM);
 				contexts.add(context);
 			} else if(frameType.contentEquals("sentence")) {
 				System.out.println("Found Sentence");
@@ -411,6 +444,9 @@ public class ReachParseXml {
 				sentence.setObjectMeta(objmeta);
 				// Set Text
 				sentence.setText(fElement.getElementsByTagName("text").item(0).getTextContent());
+				// Set Document Meta
+				sentence.setDocumentMeta(documentM);
+				// Add sentence to list of sentences
 				sentences.add(sentence);
 			} else if(frameType.contentEquals("passage")) {
 				System.out.println("Found Passage");
@@ -453,6 +489,9 @@ public class ReachParseXml {
 				passage.setObjectMeta(objmeta);
 				// Set Text
 				passage.setText(fElement.getElementsByTagName("text").item(0).getTextContent());
+				// Set Document Meta
+				passage.setDocumentMeta(documentM);
+				// Add passage to set of passages
 				passages.add(passage);
 			} else {
 				System.out.println("Found Unknown Frame Type");

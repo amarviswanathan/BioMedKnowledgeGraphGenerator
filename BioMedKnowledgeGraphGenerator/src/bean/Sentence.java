@@ -7,6 +7,7 @@ public class Sentence {
 	Passage passage;//
 	FrameType frameType = FrameType.SENTENCE;//
 	ObjectType objectType;//
+	DocumentMeta documentMeta;
 	ObjectMeta objectMeta;//
 	String frameID;//
 	String text;//
@@ -52,6 +53,12 @@ public class Sentence {
 	}
 	public void setObjectMeta(ObjectMeta objectMeta) {
 		this.objectMeta = objectMeta;
+	}
+	public DocumentMeta getDocumentMeta() {
+		return documentMeta;
+	}
+	public void setDocumentMeta(DocumentMeta documentMeta) {
+		this.documentMeta = documentMeta;
 	}
 	public String getFrameID() {
 		return frameID;

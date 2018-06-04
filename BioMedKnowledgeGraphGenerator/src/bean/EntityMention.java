@@ -8,6 +8,7 @@ public class EntityMention {
 	Sentence sentence;
 	ObjectType objectType;
 	ObjectMeta objectMeta;
+	DocumentMeta documentMeta;
 	XRefs xref;
 	String frameID;
 	String text;
@@ -54,6 +55,12 @@ public class EntityMention {
 	}
 	public void setObjectMeta(ObjectMeta objectMeta) {
 		this.objectMeta = objectMeta;
+	}
+	public DocumentMeta getDocumentMeta() {
+		return documentMeta;
+	}
+	public void setDocumentMeta(DocumentMeta documentMeta) {
+		this.documentMeta = documentMeta;
 	}
 	public XRefs getXref() {
 		return xref;

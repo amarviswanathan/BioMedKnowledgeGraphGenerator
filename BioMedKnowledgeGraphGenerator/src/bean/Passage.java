@@ -7,6 +7,7 @@ public class Passage {
 	FrameType frameType = FrameType.PASSAGE;
 	ObjectType objectType;
 	ObjectMeta objectMeta;
+	DocumentMeta documentMeta;
 	String frameID;
 	String text;
 	int index;
@@ -45,6 +46,12 @@ public class Passage {
 	}
 	public void setObjectMeta(ObjectMeta objectMeta) {
 		this.objectMeta = objectMeta;
+	}
+	public DocumentMeta getDocumentMeta() {
+		return documentMeta;
+	}
+	public void setDocumentMeta(DocumentMeta documentMeta) {
+		this.documentMeta = documentMeta;
 	}
 	public String getFrameID() {
 		return frameID;
